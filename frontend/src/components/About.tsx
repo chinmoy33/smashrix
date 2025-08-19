@@ -1,52 +1,104 @@
 import React from 'react';
 import { Mail, Phone, Award, Star } from 'lucide-react';
+import chinmoy from '../assets/chinmoy_photo.jpg';
+import diptangshu from '../assets/diptangshu.jpg';
+import orin from '../assets/orin.jpg';
+import dijit from '../assets/dijit.jpg';
+import mridul from '../assets/mridul.webp';
+import iran from '../assets/iran.jpg';
+import ishita from '../assets/ishita.jpg';
+import angaraj from '../assets/angaraj.jpg';
 
 const About: React.FC = () => {
   const coaches = [
     {
       id: 1,
-      name: "Sarah Chen",
-      role: "Head Coach",
-      experience: "15 years",
-      specialization: "Singles & Doubles Strategy",
-      image: "https://images.pexels.com/photos/3768894/pexels-photo-3768894.jpeg",
-      achievements: ["National Champion 2018", "Olympic Team Coach", "BWF Level 3 Certified"],
-      email: "sarah@smashrix.com",
-      phone: "+1 (555) 123-4567"
+      name: "Chinmoy Sharma",
+      role: "Club Head and Founder",
+      experience: "4th year",
+      image: chinmoy,
+      email: "chinmoysharma2003@gmail.com",
+      phone: "7896911752"
     },
     {
       id: 2,
-      name: "Michael Zhang",
-      role: "Technical Coach",
-      experience: "12 years",
-      specialization: "Advanced Techniques",
-      image: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg",
-      achievements: ["Former World Ranking #45", "Youth Development Expert", "Sports Science Degree"],
-      email: "michael@smashrix.com",
-      phone: "+1 (555) 234-5678"
+      name: "Iran Kataky",
+      role: "Club Head and Founder",
+      experience: "4th year",
+      //specialization: "Advanced Techniques",
+      //image: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg",
+      image: iran,
+      //achievements: ["Former World Ranking #45", "Youth Development Expert", "Sports Science Degree"],
+      email: "irankataky0906@gmail.com",
+      phone: "6900300469"
+    },
+    {
+      id: 7,
+      name: "Angaraj Thengal",
+      role: "Executive Member",
+      experience: "4th year",
+      //specialization: "Sports Conditioning",
+      image: angaraj,
+      //achievements: ["Sports Medicine Degree", "Certified Strength Coach", "Injury Prevention Expert"],
+      email: "angarajthengal5759@gmail.com",
+      phone: "9864724303"
     },
     {
       id: 3,
-      name: "Emma Rodriguez",
-      role: "Youth Coach",
-      experience: "8 years",
-      specialization: "Junior Development",
-      image: "https://images.pexels.com/photos/3764579/pexels-photo-3764579.jpeg",
-      achievements: ["Junior World Championships", "Child Psychology Certified", "BWF Level 2 Certified"],
-      email: "emma@smashrix.com",
-      phone: "+1 (555) 345-6789"
+      name: "Mridul Hazarika",
+      role: "Executive Member",
+      experience: "3rd year",
+      //specialization: "Sports Conditioning",
+      image: mridul,
+      //achievements: ["Sports Medicine Degree", "Certified Strength Coach", "Injury Prevention Expert"],
+      email: "mridul23@jecassam.ac.in",
+      phone: "8638911494"
     },
     {
       id: 4,
-      name: "David Kumar",
-      role: "Fitness Coach",
-      experience: "10 years",
-      specialization: "Sports Conditioning",
-      image: "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg",
-      achievements: ["Sports Medicine Degree", "Certified Strength Coach", "Injury Prevention Expert"],
-      email: "david@smashrix.com",
-      phone: "+1 (555) 456-7890"
-    }
+      name: "Diptangshu Parashar",
+      role: "Executive Member",
+      experience: "3rd year",
+      //specialization: "Junior Development",
+      image: diptangshu,
+      //achievements: ["Junior World Championships", "Child Psychology Certified", "BWF Level 2 Certified"],
+      email: "emma@smashrix.com",
+      phone: "7099662292"
+    },
+    {
+      id: 5,
+      name: "Ishita Das",
+      role: "Executive Member",
+      experience: "3rd year",
+      //specialization: "Sports Conditioning",
+      image: ishita,
+      //achievements: ["Sports Medicine Degree", "Certified Strength Coach", "Injury Prevention Expert"],
+      email: "ishi712004@gmail.com",
+      phone: "9864869881"
+    },
+    {
+      id: 6,
+      name: "Dijit Gautam",
+      role: "Executive Member",
+      experience: "2nd year",
+      //specialization: "Sports Conditioning",
+      image: dijit,
+      //achievements: ["Sports Medicine Degree", "Certified Strength Coach", "Injury Prevention Expert"],
+      email: "gautamdijit@gmail.com",
+      phone: "9395982341"
+    },
+    {
+      id: 7,
+      name: "Orin Kashyap",
+      role: "Executive Member",
+      experience: "2nd year",
+      //specialization: "Sports Conditioning",
+      image: orin,
+      //achievements: ["Sports Medicine Degree", "Certified Strength Coach", "Injury Prevention Expert"],
+      email: "orinkashyap42@gmail.com",
+      phone: "7086560707"
+    },
+    
   ];
 
   return (
@@ -114,9 +166,9 @@ const About: React.FC = () => {
                   </div>
                   
                   <p className="text-orange-600 font-semibold mb-2">{coach.role}</p>
-                  <p className="text-gray-600 mb-4"><strong>Specialization:</strong> {coach.specialization}</p>
+                  {/* <p className="text-gray-600 mb-4"><strong>Specialization:</strong> {coach.specialization}</p> */}
                   
-                  <div className="mb-4">
+                  {/* <div className="mb-4">
                     <h5 className="font-semibold text-gray-900 mb-2 flex items-center">
                       <Award size={16} className="mr-2 text-yellow-600" />
                       Key Achievements
@@ -129,17 +181,21 @@ const About: React.FC = () => {
                         </li>
                       ))}
                     </ul>
-                  </div>
+                  </div> */}
                   
                   <div className="border-t pt-4 flex flex-col space-y-2">
+                    <a href={`mailto:${coach.phone}`}>
                     <div className="flex items-center text-sm text-gray-600">
                       <Mail size={16} className="mr-2 text-gray-500" />
                       {coach.email}
                     </div>
+                    </a>
+                    <a href={`tel:${coach.phone}`}>
                     <div className="flex items-center text-sm text-gray-600">
                       <Phone size={16} className="mr-2 text-gray-500" />
                       {coach.phone}
                     </div>
+                    </a>
                   </div>
                 </div>
               </div>

@@ -2,80 +2,60 @@ import React, { useState,useEffect } from 'react';
 import { Plus, Calendar, Users, Trophy, Settings, BarChart3 } from 'lucide-react';
 import EventHostingModal from '../components/Admin/EventHostingModal';
 import MatchmakingPanel from '../components/Admin/MatchmakingPanel';
-import { Event, Player } from '../types/Event';
+import { Event} from '../types/Event';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { toast } from 'react-hot-toast';
+import { hostService } from '../services/hostService';
+import { registrationService } from '../services/registrationService';
+import { Registration } from '../types/Event';
+import { Edit, Trash2 } from 'lucide-react';
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: 1,
-      free: false,
-      title: "Spring Championship 2024",
-      description: "Annual spring tournament featuring all categories",
-      category: "Singles",
-      date: "2024-04-15",
-      time: "09:00",
-      venue: "Main Arena",
-      amount: 50,
-      created_at: "2024-03-01T10:00:00Z"
-    },
-    {
-      id: 2,
-      free: true,
-      title: "Community Training Session",
-      description: "Free training session for all skill levels",
-      category: "Training",
-      date: "2024-03-25",
-      time: "18:00",
-      venue: "Training Courts",
-      amount: 0,
-      created_at: "2024-03-10T14:30:00Z"
-    }
-  ]);
+  const [events, setEvents] = useState<Event[]>([]);
 
-  const [players] = useState<Player[]>([
-    {
-      id: 1,
-      name: "Alex Johnson",
-      email: "alex@example.com",
-      skill_level: "Advanced",
-      preferred_category: "Singles",
-      registered_events: [1],
-      created_at: "2024-02-15T09:00:00Z"
-    },
-    {
-      id: 2,
-      name: "Sarah Chen",
-      email: "sarah@example.com",
-      skill_level: "Professional",
-      preferred_category: "Doubles",
-      registered_events: [1, 2],
-      created_at: "2024-02-20T11:30:00Z"
-    },
-    {
-      id: 3,
-      name: "Mike Rodriguez",
-      email: "mike@example.com",
-      skill_level: "Intermediate",
-      preferred_category: "Mixed Doubles",
-      registered_events: [2],
-      created_at: "2024-02-25T16:45:00Z"
-    },
-    {
-      id: 4,
-      name: "Emma Wilson",
-      email: "emma@example.com",
-      skill_level: "Advanced",
-      preferred_category: "Singles",
-      registered_events: [1],
-      created_at: "2024-03-01T08:15:00Z"
-    }
-  ]);
+  const [players, setPlayers] = useState<Registration[]>([]);
+  // const [players] = useState<Player[]>([
+  //   {
+  //     id: 1,
+  //     name: "Alex Johnson",
+  //     email: "alex@example.com",
+  //     skill_level: "Advanced",
+  //     preferred_category: "Singles",
+  //     registered_events: [1],
+  //     created_at: "2024-02-15T09:00:00Z"
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Sarah Chen",
+  //     email: "sarah@example.com",
+  //     skill_level: "Professional",
+  //     preferred_category: "Doubles",
+  //     registered_events: [1, 2],
+  //     created_at: "2024-02-20T11:30:00Z"
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Mike Rodriguez",
+  //     email: "mike@example.com",
+  //     skill_level: "Intermediate",
+  //     preferred_category: "Mixed Doubles",
+  //     registered_events: [2],
+  //     created_at: "2024-02-25T16:45:00Z"
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Emma Wilson",
+  //     email: "emma@example.com",
+  //     skill_level: "Advanced",
+  //     preferred_category: "Singles",
+  //     registered_events: [1],
+  //     created_at: "2024-03-01T08:15:00Z"
+  //   }
+  // ]);
   useEffect(() => {
     const getUser = async () => {
       const {
@@ -91,6 +71,43 @@ const AdminDashboard: React.FC = () => {
 
     getUser();
   }, []);
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const response = await registrationService.getRegistrations();
+        if (response.success) {
+          console.log("Fetched registrations:", response.data);
+          setPlayers(response.data);
+        } else {
+          toast.error(response.message);
+        }
+      } catch (error) {
+        console.error("Error fetching hosted events:", error);
+        toast.error("Failed to fetch hosted events");
+      }
+    };
+
+    fetchPlayers();
+  }, []);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await hostService.getHostedEvents();
+        if (response.success) {
+          setEvents(response.data);
+        } else {
+          toast.error(response.message);
+        }
+      } catch (error) {
+        console.error("Error fetching hosted events:", error);
+        toast.error("Failed to fetch hosted events");
+      }
+    };
+
+    fetchEvents();
+  }, []);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -105,13 +122,38 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleEventCreate = (newEvent: Omit<Event, 'id' | 'created_at'>) => {
-    const event: Event = {
-      ...newEvent,
-      id: events.length + 1,
-      created_at: new Date().toISOString()
-    };
-    setEvents([...events, event]);
-    setIsEventModalOpen(false);
+    // const event: Event = {
+    //   ...newEvent,
+    //   id: events.length + 1,
+    //   created_at: new Date().toISOString()
+    // };
+    // setEvents([...events, event]);
+    // setIsEventModalOpen(false);
+    try{
+        hostService.hostEvent(newEvent as Event)
+      .then(response => {
+        if (response.success) {
+          console.log("Event hosted successfully:", response.data);
+          setEvents([...events, ...response.data]);
+          setIsEventModalOpen(false);
+          toast.success("Event hosted successfully");
+        } else {
+          toast.error(response.message);
+        }
+      })
+      .catch(error => {
+        console.error("Error hosting event:", error);
+        toast.error("Failed to host event");
+      });
+    }
+    catch(error){
+      console.error("Error in handleEventCreate:", error);
+      toast.error("Failed to host event");
+    }
+    finally{
+      setIsEventModalOpen(false);
+    }
+    
   };
 
   const stats = {
@@ -334,7 +376,7 @@ const AdminDashboard: React.FC = () => {
                 Events
               </button>
             </li>
-            <li>
+            {/* <li>
               <button
                 className={`${activeTab === 'matchmaking' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
                 onClick={() => setActiveTab('matchmaking')}
@@ -342,7 +384,7 @@ const AdminDashboard: React.FC = () => {
                 <Trophy className="w-5 h-5" />
                 Matchmaking
               </button>
-            </li>
+            </li> */}
             <li>
               <button
                 className={`${activeTab === 'players' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
@@ -359,54 +401,107 @@ const AdminDashboard: React.FC = () => {
         <div className="flex-1 p-6">
           {activeTab === 'overview' && renderOverview()}
           {activeTab === 'events' && renderEvents()}
-          {activeTab === 'matchmaking' && <MatchmakingPanel events={events} players={players} />}
+          {/* {activeTab === 'matchmaking' && <MatchmakingPanel events={events} players={players} />} */}
           {activeTab === 'players' && (
+            // <div className="card bg-base-100 shadow-lg">
+            //   <div className="card-body">
+            //     <h2 className="card-title text-neutral mb-4">Player Management</h2>
+            //     <div className="overflow-x-auto">
+            //       <table className="table table-zebra w-full">
+            //         <thead>
+            //           <tr className="text-neutral">
+            //             <th>Name</th>
+            //             <th>Email</th>
+            //             <th>Skill Level</th>
+            //             <th>Preferred Category</th>
+            //             <th>Registered Events</th>
+            //             <th>Actions</th>
+            //           </tr>
+            //         </thead>
+            //         <tbody>
+            //           {players.map((player) => (
+            //             <tr key={player.id} className="hover">
+            //               <td className="font-semibold text-neutral">{player.name}</td>
+            //               <td className="text-neutral">{player.email}</td>
+            //               <td>
+            //                 <span className={`badge ${
+            //                   player.skill_level === 'Professional' ? 'badge-error' :
+            //                   player.skill_level === 'Advanced' ? 'badge-warning' :
+            //                   player.skill_level === 'Intermediate' ? 'badge-info' : 'badge-success'
+            //                 }`}>
+            //                   {player.skill_level}
+            //                 </span>
+            //               </td>
+            //               <td>
+            //                 <span className="badge badge-outline badge-primary">{player.preferred_category}</span>
+            //               </td>
+            //               <td className="text-neutral">{player.registered_events.length} events</td>
+            //               <td>
+            //                 <div className="flex gap-2">
+            //                   <button className="btn btn-xs btn-outline btn-info">View</button>
+            //                   <button className="btn btn-xs btn-outline btn-warning">Edit</button>
+            //                 </div>
+            //               </td>
+            //             </tr>
+            //           ))}
+            //         </tbody>
+            //       </table>
+            //     </div>
+            //   </div>
+            // </div>
             <div className="card bg-base-100 shadow-lg">
-              <div className="card-body">
-                <h2 className="card-title text-neutral mb-4">Player Management</h2>
-                <div className="overflow-x-auto">
-                  <table className="table table-zebra w-full">
-                    <thead>
-                      <tr className="text-neutral">
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Skill Level</th>
-                        <th>Preferred Category</th>
-                        <th>Registered Events</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {players.map((player) => (
-                        <tr key={player.id} className="hover">
-                          <td className="font-semibold text-neutral">{player.name}</td>
-                          <td className="text-neutral">{player.email}</td>
-                          <td>
-                            <span className={`badge ${
-                              player.skill_level === 'Professional' ? 'badge-error' :
-                              player.skill_level === 'Advanced' ? 'badge-warning' :
-                              player.skill_level === 'Intermediate' ? 'badge-info' : 'badge-success'
-                            }`}>
-                              {player.skill_level}
-                            </span>
-                          </td>
-                          <td>
-                            <span className="badge badge-outline badge-primary">{player.preferred_category}</span>
-                          </td>
-                          <td className="text-neutral">{player.registered_events.length} events</td>
-                          <td>
-                            <div className="flex gap-2">
-                              <button className="btn btn-xs btn-outline btn-info">View</button>
-                              <button className="btn btn-xs btn-outline btn-warning">Edit</button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+      <div className="card-body">
+        <h2 className="card-title text-neutral mb-4">Event Registrations</h2>
+        <div className="overflow-x-auto">
+          <table className="table table-zebra w-full">
+            <thead>
+              <tr className="text-neutral">
+                <th>Name(s)</th>
+                <th>Phone</th>
+                <th>Gender(s)</th>
+                <th>Event ID</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {players.map((reg) => (
+                <tr key={reg.id} className="hover">
+                  <td className="font-semibold text-neutral">
+                    {reg.player.name2 ? `${reg.player.name1} & ${reg.player.name2}` : reg.player.name1}
+                  </td>
+                  <td className="text-neutral">
+                    {reg.phone.phone2 ? `${reg.phone.phone1}, ${reg.phone.phone2}` : reg.phone.phone1}
+                  </td>
+                  <td>
+                    <div className="flex gap-2">
+                      <span className="badge badge-outline badge-secondary">
+                        {reg.gender.gender1}
+                      </span>
+                      {reg.gender.gender2 && (
+                        <span className="badge badge-outline badge-secondary">
+                          {reg.gender.gender2}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="text-neutral">{reg.eventId}</td>
+                  <td>
+                    <div className="flex gap-2">
+                      <button className="btn btn-xs btn-outline btn-info" onClick={() => handleEdit(reg.id)}>
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button className="btn btn-xs btn-outline btn-warning" onClick={() => handleDelete(reg.id)}>
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
           )}
         </div>
       </div>

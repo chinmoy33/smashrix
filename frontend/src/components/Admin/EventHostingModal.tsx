@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Calendar, Clock, MapPin, DollarSign, Tag, FileText } from 'lucide-react';
 import { Event, Category } from '../../types/Event';
+import { hostService } from '../../services/hostService';
 
 interface EventHostingModalProps {
   isOpen: boolean;
@@ -22,7 +23,7 @@ const EventHostingModal: React.FC<EventHostingModalProps> = ({ isOpen, onClose, 
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const categories: Category[] = ['Singles', 'Doubles', 'Mixed Doubles', 'Team Event', 'Training', 'Social'];
+  const categories: Category[] = ['Singles', 'Doubles', 'Mixed Doubles'];
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -67,7 +68,7 @@ const EventHostingModal: React.FC<EventHostingModalProps> = ({ isOpen, onClose, 
   if (!isOpen) return null;
 
   return (
-    <div className="modal modal-open" data-theme="smashrix">
+    <div className="modal modal-open" data-theme="light">
       <div className="modal-box w-11/12 max-w-2xl bg-base-100">
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-bold text-2xl text-neutral flex items-center">
@@ -211,12 +212,14 @@ const EventHostingModal: React.FC<EventHostingModalProps> = ({ isOpen, onClose, 
               </label>
               <input
                 type="number"
-                min="0"
-                step="0.01"
+                step="1"
                 className={`input input-bordered ${errors.amount ? 'input-error' : 'focus:input-primary'}`}
-                placeholder="0.00"
-                value={formData.amount}
-                onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
+                placeholder="0"
+                value={formData.amount === null ? '' : formData.amount}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  handleInputChange('amount', value === '' ? null : parseFloat(value));
+                }}
               />
               {errors.amount && <label className="label"><span className="label-text-alt text-error">{errors.amount}</span></label>}
             </div>

@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3002;
 app.use(cors());
 //app.use(cors({ origin: "http://localhost:3000" }));
 const allowedOrigins = [
-  "http://localhost:3000",
+  "http://localhost:5173",
   "https://Smashrix.vercel.app",
 ];
 

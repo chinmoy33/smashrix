@@ -10,7 +10,7 @@ const getHostedEvents = async (req, res) => {
     }
 
     if (!data || data.length === 0) {
-      return res.status(404).json({ message: "No Events found" });
+      return res.status(200).json({ message: "No Events found" });
     }
 
     return res.status(200).json({ success: true, message: "fetched Event details", data: data });
@@ -23,34 +23,27 @@ const getHostedEvents = async (req, res) => {
 const hostEvent = async (req, res) => {
   try {
     const {
-      interested,
-      contacted,
-      type_of_mutual_fund,
-      amount,
-      final_amount,
-      kyc_completed=false,
-      final_disbursed_amt,
+      free,
+      title,
+      description,
+      category,
+      date,
+      time,
+      venue,
+      amount
     } = req.body;
-    
-    let new_final_disbursed_amt=null
-    if(!kyc_completed && interested==="yes")
-    {
-      new_final_disbursed_amt=0;
-    }
-    else
-    {
-      new_final_disbursed_amt=final_disbursed_amt
-    }
 
     const { data: insertData, error: insertError } = await supabase
       .from("Events")
       .insert({
-        interested,
-        type_of_mutual_fund,
-        amount,
-        final_amount,
-        kyc_completed,
-        final_disbursed_amt:new_final_disbursed_amt,
+        free,
+        title,
+        description,
+        category,
+        date,
+        time,
+        venue,
+        amount
       })
       .select();
 
@@ -70,38 +63,27 @@ const updateEvent = async (req, res) => {
   try {
     const id = req.params.id;
     const {
-      interested,
-      contacted,
-      type_of_mutual_fund,
-      amount,
-      final_amount,
-      kyc_completed=false,
-      final_disbursed_amt,
+      free,
+      title,
+      description,
+      category,
+      date,
+      time,
+      venue,
+      amount
     } = req.body;
-    
-    let new_final_disbursed_amt=null
-    if(!kyc_completed && interested==="yes")
-    {
-      new_final_disbursed_amt=0;
-    }
-    else
-    {
-      new_final_disbursed_amt=final_disbursed_amt
-    }
-
-    if (!id) {
-      return res.status(400).json({ success: false, message: "Missing ID parameter" });
-    }
     
     const { data: updateData, error: updateError } = await supabase
       .from("Events")
       .update({
-        interested,
-        type_of_mutual_fund,
-        amount,
-        final_amount,
-        kyc_completed,
-        final_disbursed_amt:new_final_disbursed_amt,
+        free,
+        title,
+        description,
+        category,
+        date,
+        time,
+        venue,
+        amount
       })
       .eq("Event_id", id)
       .select();

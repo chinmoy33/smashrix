@@ -57,11 +57,14 @@ function App() {
         position="top-right"
         toastOptions={{
           style: {
-            background: "rgba(255, 255, 255, 0.1)",
-            color: "#fff",
-            backdropFilter: "blur(10px)",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-          },
+    // Semi-transparent black background for visibility on a light theme
+    background: "rgba(0, 0, 0, 0.8)", 
+    // White text for high contrast on the dark background
+    color: "#fff", 
+    backdropFilter: "blur(10px)",
+    // Darker border for definition
+    border: "1px solid rgba(0, 0, 0, 0.1)", 
+  },
         }}
       />
       
@@ -76,7 +79,7 @@ function App() {
               </p>
             </div>
             
-            <div>
+            {/* <div>
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-gray-300">
                 <li><button onClick={() => setActiveSection('home')} className="hover:text-orange-400 transition-colors">Home</button></li>
@@ -84,22 +87,22 @@ function App() {
                 <li><button onClick={() => setActiveSection('events')} className="hover:text-orange-400 transition-colors">Events</button></li>
                 <li><a href="#" className="hover:text-orange-400 transition-colors">Membership</a></li>
               </ul>
-            </div>
+            </div> */}
             
             <div>
               <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
               <ul className="space-y-2 text-gray-300">
-                <li>Phone 1: 6900300469</li>
-                <li>Phone 2: 7896911752</li>
+                <a href={`tel:6900300469`}><li>Phone 1: 6900300469</li></a>
+                <a href={`tel:7896911752`}><li>Phone 2: 7896911752</li></a>
               </ul>
             </div>
             
             <div>
-              <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
+              <h4 className="text-lg font-semibold mb-4">Join Us</h4>
               <div className="flex space-x-4">
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors">Facebook</a>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors">Instagram</a>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors">Twitter</a>
+                <a href="https://chat.whatsapp.com/L6cGVIZO5p09Xa76PAMT0K?mode=ac_t" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-orange-400 transition-colors">Whatsapp</a>
+                {/* <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors">Instagram</a>
+                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors">Twitter</a> */}
               </div>
             </div>
           </div>

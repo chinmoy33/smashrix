@@ -3,9 +3,8 @@ import Navbar from '../components/Navbar';
 import Home from '../components/Home';
 import About from '../components/About';
 import Events from '../components/Events';
-import LottieCursor from '../components/LottieCursor';
 
-function App() {
+function LandingPage() {
   const [activeSection, setActiveSection] = useState('home');
 
 
@@ -35,4 +34,4 @@ function App() {
   );
 }
 
-export default App;
+export default LandingPage;

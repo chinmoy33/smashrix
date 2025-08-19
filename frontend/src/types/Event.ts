@@ -1,26 +1,7 @@
-// export enum Category {
-//   Singles = 'singles',
-//   Doubles = 'doubles',
-//   MixedDoubles = 'mixed doubles',
-// }
-
-// // Define the interface using the enum as a type
-// export interface eventSchema {
-//   id: number;
-//   free: boolean;
-//   title: string;
-//   description: string;
-//   category: Category;
-//   date:String;
-//   time:String;
-//   venue:String;
-//   amount: number;
-//   created_at: string;
-// }
-export type Category = 'Singles' | 'Doubles' | 'Mixed Doubles' | 'Team Event' | 'Training' | 'Social';
+export type Category = 'Singles' | 'Doubles' | 'Mixed Doubles';
 
 export interface Event {
-  id: number;
+  id: bigint;
   free: boolean;
   title: string;
   description: string;
@@ -32,14 +13,41 @@ export interface Event {
   created_at: string;
 }
 
-export interface Player {
+// export interface Player {
+//   id: number;
+//   name: string;
+//   email: string;
+//   skill_level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Professional';
+//   preferred_category: Category;
+//   registered_events: number[];
+//   created_at: string;
+// }
+
+export interface SinglesPlayer {
   id: number;
-  name: string;
-  email: string;
-  skill_level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Professional';
-  preferred_category: Category;
-  registered_events: number[];
+  name1: string;
+  gender1: string; 
+  phone1: string;
   created_at: string;
+}
+
+export interface DoublesPlayer {
+  id: number;
+  name1: string;
+  name2: string;
+  gender1: string; 
+  gender2: string;
+  phone1: string;
+  phone2: string;
+  created_at: string;
+}
+
+export interface Registration {
+  id: number; 
+  player: {name1: string, name2?: string};
+  gender: {gender1: string, gender2?: string};
+  phone: {phone1: string, phone2?: string};
+  eventId: bigint;
 }
 
 export interface Match {

@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { getRegister, register, updateRegister, deleteRegister} = require("../controllers/registerControllers");
+const { getRegister, register, updateRegister, deleteRegister} = require("../controllers/registrationControllers");
 
 router.get("/", getRegister);
 
-router.post("/register", register)
+router.post("/registerEvent/:id", register)
 
 router.post("/updateRegister/:id",updateRegister);
 

@@ -1,6 +1,6 @@
 // src/services/recommendationService.ts
 import axios from "axios";
-import { eventSchema } from "../types/Event.ts";
+import { Event, Category } from "../types/Event.ts";
 
 const API_BASE_URL =
   import.meta.env.MODE === 'development'
@@ -14,13 +14,13 @@ const hostApi = axios.create({
 interface hostResponse {
   success:boolean,
   message:string,
-  data:eventSchema
+  data:Event[]
 };
 
 interface getHostedEvents {
   success:boolean,
   message:string,
-  data:eventSchema[]
+  data:Event[]
 };
 
 interface deleteResponse {
@@ -37,13 +37,25 @@ interface formDatatype{
   final_disbursed_amt:number,
 };
 
+interface EventDataType{
+  free: boolean;
+  title: string;
+  description: string;
+  category: Category;
+  date: string;
+  time: string;
+  venue: string;
+  amount: number|null;
+  created_at: string;
+};
+
 export const hostService = {
   async getHostedEvents(): Promise<getHostedEvents> {
     const response = await hostApi.get("/api/host/getHostedEvents");
     return response.data;
   },
-  async hostEvent(): Promise<hostResponse> {
-    const response = await hostApi.get("/api/host/hostEvent");
+  async hostEvent(formData:EventDataType): Promise<hostResponse> {
+    const response = await hostApi.post("/api/host/hostEvent",formData);
     return response.data;
   },
   async updateEvent(id:number,formData:formDatatype): Promise<hostResponse> {

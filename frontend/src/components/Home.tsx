@@ -30,12 +30,14 @@ const Home: React.FC = () => {
             Where Champions Are Made, One Smash at a Time
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="https://chat.whatsapp.com/L6cGVIZO5p09Xa76PAMT0K?mode=ac_t" target="_blank" rel="noopener noreferrer">
             <button className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105">
               Join Our Club
             </button>
-            <button className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-3 rounded-lg font-semibold transition-all duration-300">
+            </a>
+            {/* <button className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-3 rounded-lg font-semibold transition-all duration-300">
               Watch Training Videos
-            </button>
+            </button> */}
           </div>
         </div>
         
@@ -50,7 +52,7 @@ const Home: React.FC = () => {
                 <Users size={32} />
               </div>
               <div className="text-3xl font-bold text-gray-900 mb-2">6</div>
-              <div className="text-gray-600">Executive Members</div>
+              <div className="text-gray-600">Management Members</div>
             </div>
             
             <div className="text-center group">

@@ -21,36 +21,24 @@ const getRegister = async (req, res) => {
 };
 
 const register = async (req, res) => {
+  const id= req.params.id;
   try {
     const {
-      interested,
-      contacted,
-      type_of_mutual_fund,
-      amount,
-      final_amount,
-      kyc_completed=false,
-      final_disbursed_amt,
+      name1,
+      phone1,
+      gender1,
+      name2,
+      phone2,
+      gender2=""
     } = req.body;
-    
-    let new_final_disbursed_amt=null
-    if(!kyc_completed && interested==="yes")
-    {
-      new_final_disbursed_amt=0;
-    }
-    else
-    {
-      new_final_disbursed_amt=final_disbursed_amt
-    }
-
+  
     const { data: insertData, error: insertError } = await supabase
       .from("Registration")
       .insert({
-        interested,
-        type_of_mutual_fund,
-        amount,
-        final_amount,
-        kyc_completed,
-        final_disbursed_amt:new_final_disbursed_amt,
+        player:{name1,name2},
+        gender:{gender1,gender2},
+        phone:{phone1,phone2},
+        eventId: id
       })
       .select();
 

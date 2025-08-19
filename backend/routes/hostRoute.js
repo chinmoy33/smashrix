@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { getHostedEvents, hostEvent, updateEvent, deleteEvent} = require("../controllers/hostControllers");
 
-router.get("/", getHostedEvents);
+router.get("/getHostedEvents", getHostedEvents);
 
 router.post("/hostEvent", hostEvent)
 
