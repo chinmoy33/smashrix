@@ -104,7 +104,6 @@ const Events: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching hosted events:", error);
-        toast.error("Failed to fetch hosted events");
       }
     };
 

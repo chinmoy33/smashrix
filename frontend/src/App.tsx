@@ -70,8 +70,8 @@ function App() {
       
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
+        <div className="max-w-full px-4 sm:px-6 lg:px-24">
+          <div className="grid md:grid-cols-3 gap-8">
             <div>
               <h3 className="text-2xl font-bold text-orange-400 mb-4">Smashrix</h3>
               <p className="text-gray-300 leading-relaxed">

@@ -51,7 +51,7 @@ const Home: React.FC = () => {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 text-orange-600 rounded-full mb-4 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                 <Users size={32} />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-2">6</div>
+              <div className="text-3xl font-bold text-gray-900 mb-2">8</div>
               <div className="text-gray-600">Management Members</div>
             </div>
             

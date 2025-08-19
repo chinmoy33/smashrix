@@ -79,12 +79,9 @@ const AdminDashboard: React.FC = () => {
         if (response.success) {
           console.log("Fetched registrations:", response.data);
           setPlayers(response.data);
-        } else {
-          toast.error(response.message);
         }
       } catch (error) {
-        console.error("Error fetching hosted events:", error);
-        toast.error("Failed to fetch hosted events");
+        console.error("Error fetching players:", error);
       }
     };
 
@@ -97,12 +94,9 @@ const AdminDashboard: React.FC = () => {
         const response = await hostService.getHostedEvents();
         if (response.success) {
           setEvents(response.data);
-        } else {
-          toast.error(response.message);
         }
       } catch (error) {
         console.error("Error fetching hosted events:", error);
-        toast.error("Failed to fetch hosted events");
       }
     };
 
