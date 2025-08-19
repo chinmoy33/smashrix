@@ -4,7 +4,7 @@ import chinmoy from '../assets/chinmoy_photo.jpg';
 import diptangshu from '../assets/diptangshu.jpg';
 import orin from '../assets/orin.jpg';
 import dijit from '../assets/dijit.jpg';
-import mridul from '../assets/mridul.webp';
+import mridul from '../assets/Mridul.webp';
 import iran from '../assets/iran.jpg';
 import ishita from '../assets/ishita.jpg';
 import angaraj from '../assets/angaraj.jpg';
