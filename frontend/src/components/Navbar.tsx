@@ -2,13 +2,17 @@ import React from 'react';
 import { Menu, X } from 'lucide-react';
 import LottieAnimation from "./LottieAnimation"
 import { useNavigate } from "react-router-dom";
+import {useSelector, useDispatch } from 'react-redux';
+import { setActiveSection } from '../store/renderSlice.ts';
 
-interface NavbarProps {
-  activeSection: string;
-  setActiveSection: (section: string) => void;
-}
+// interface NavbarProps {
+//   activeSection: string;
+//   setActiveSection: (section: string) => void;
+// }
 
-const Navbar: React.FC<NavbarProps> = ({ activeSection, setActiveSection }) => {
+const Navbar = () => {
+  const activeSection = useSelector((state) => state.render.activeSection);
+  const dispatch = useDispatch();
   const navigate=useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -38,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection, setActiveSection }) => {
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => {if(item.id!="Admin"){setActiveSection(item.id)}else{navigate("/Login");}}}
+                  onClick={() => {if(item.id!="Admin"){dispatch(setActiveSection(item.id))}else{navigate("/Login");}}}
                   className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
                     activeSection === item.id
                       ? 'text-orange-600 border-b-2 border-orange-600'
@@ -73,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection, setActiveSection }) => {
                 onClick={() => {
                   if(item.id!="Admin")
                   {
-                    setActiveSection(item.id);
+                    dispatch(setActiveSection(item.id));
                   } 
                   else
                   {

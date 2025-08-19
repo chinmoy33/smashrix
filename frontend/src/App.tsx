@@ -14,9 +14,14 @@ import OAuthCallback from "./components/OAuthCallback.tsx";
 //import DashboardPage from "./pages/DashboardPage.tsx";
 //import PageNotFound from "./pages/PageNotFound.tsx";
 import Admindashboard from "./pages/Admindashboard.tsx";
+import { useSelector, useDispatch } from 'react-redux';
+import { store } from './store/store.ts'; // Adjust the path if needed
+import { setActiveSection } from './store/renderSlice.ts'; // Adjust the path if needed
 
 function App() {
-  const [activeSection, setActiveSection] = useState('home');
+  const activeSection = useSelector((state) => state.render.activeSection);
+  const dispatch = useDispatch();
+  //const [activeSection, setActiveSection] = useState('home');
 
 
   const renderSection = () => {
@@ -70,8 +75,8 @@ function App() {
       
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-full px-4 sm:px-6 lg:px-24">
-          <div className="grid md:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-2xl font-bold text-orange-400 mb-4">Smashrix</h3>
               <p className="text-gray-300 leading-relaxed">
@@ -79,26 +84,25 @@ function App() {
               </p>
             </div>
             
-            {/* <div>
+            <div>
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><button onClick={() => setActiveSection('home')} className="hover:text-orange-400 transition-colors">Home</button></li>
-                <li><button onClick={() => setActiveSection('about')} className="hover:text-orange-400 transition-colors">About</button></li>
-                <li><button onClick={() => setActiveSection('events')} className="hover:text-orange-400 transition-colors">Events</button></li>
-                <li><a href="#" className="hover:text-orange-400 transition-colors">Membership</a></li>
-              </ul>
-            </div> */}
-            
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
-              <ul className="space-y-2 text-gray-300">
-                <a href={`tel:6900300469`}><li>Phone 1: 6900300469</li></a>
-                <a href={`tel:7896911752`}><li>Phone 2: 7896911752</li></a>
+                <li><button onClick={() => dispatch(setActiveSection('home'))} className="hover:text-orange-400 transition-colors">Home</button></li>
+                <li><button onClick={() => dispatch(setActiveSection('about'))} className="hover:text-orange-400 transition-colors">About</button></li>
+                <li><button onClick={() => dispatch(setActiveSection('events'))} className="hover:text-orange-400 transition-colors">Events</button></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="text-lg font-semibold mb-4">Join Us</h4>
+              <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
+              <ul className="space-y-2 text-gray-300">
+                <li>Phone 1: 6900300469</li>
+                <li>Phone 2: 7896911752</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
               <div className="flex space-x-4">
                 <a href="https://chat.whatsapp.com/L6cGVIZO5p09Xa76PAMT0K?mode=ac_t" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-orange-400 transition-colors">Whatsapp</a>
                 {/* <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors">Instagram</a>

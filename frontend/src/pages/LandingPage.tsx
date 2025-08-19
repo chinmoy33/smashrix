@@ -3,9 +3,12 @@ import Navbar from '../components/Navbar';
 import Home from '../components/Home';
 import About from '../components/About';
 import Events from '../components/Events';
+import {useSelector} from 'react-redux';
+// import { setActiveSection } from '../store/renderSlice.ts'; // Adjust the path if needed
 
 function LandingPage() {
-  const [activeSection, setActiveSection] = useState('home');
+  const activeSection = useSelector((state) => state.render.activeSection);
+  //const [activeSection, setActiveSection] = useState('home');
 
 
   const renderSection = () => {
@@ -24,7 +27,7 @@ function LandingPage() {
   return (
     <div className="min-h-screen bg-white" >
       
-      <Navbar activeSection={activeSection} setActiveSection={setActiveSection} />
+      <Navbar/>
       <main className="pt-16">
         {renderSection()}
       </main> 
