@@ -7,10 +7,7 @@ interface EmptyEventsPlaceholderProps {
   showCreateButton?: boolean;
 }
 
-const EmptyEventsPlaceholder: React.FC<EmptyEventsPlaceholderProps> = ({ 
-  onCreateEvent, 
-  showCreateButton = false 
-}) => {
+const EmptyEventsPlaceholder: React.FC<EmptyEventsPlaceholderProps> = () => {
   return (
     <div className="min-h-[400px] flex items-center justify-center p-8">
       <div className="text-center max-w-md mx-auto">
@@ -50,23 +47,11 @@ const EmptyEventsPlaceholder: React.FC<EmptyEventsPlaceholderProps> = ({
 
         {/* Action Buttons */}
         <div className="space-y-3 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
-          {showCreateButton && onCreateEvent && (
-            <button
-              onClick={onCreateEvent}
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 
-                         bg-sport-orange text-white font-semibold rounded-lg 
-                         hover:bg-sport-orange/90 transition-all duration-300 
-                         transform hover:scale-105 hover:shadow-lg"
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              Create Event
-            </button>
-          )}
           
           <button className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 
                            border-2 border-sport-blue text-sport-blue font-semibold rounded-lg 
-                           hover:bg-sport-blue hover:text-white transition-all duration-300 
-                           transform hover:scale-105">
+                           hover:bg-sport-blue transition-all duration-300 
+                           transform hover:scale-105" disabled>
             <Calendar className="w-5 h-5 mr-2" />
             Get Notified
           </button>

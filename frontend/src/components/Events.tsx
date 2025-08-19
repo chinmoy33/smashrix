@@ -232,10 +232,7 @@ const Events: React.FC = () => {
             //     Check back soon for new events and tournaments!
             //   </p>
             // </div>
-            <EmptyEventsPlaceholder 
-            showCreateButton={true}
-            onCreateEvent={() => console.log('Create event clicked!')}
-          />
+            <EmptyEventsPlaceholder />
           ):(
           <div className="grid lg:grid-cols-2 gap-8">
             {upcomingEvents.map((event) => (
