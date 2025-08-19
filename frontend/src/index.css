@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Any custom styles, including your cursor rule, should go after these lines */
+* {
+  cursor: none;
+}
+
+/* Keep the global rule to hide the cursor on the main body */
+body {
+  cursor: none;
+}
+
+/* Add a rule to override the default pointer behavior on interactive elements */
+button,
+a,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"] { /* Add this for accessibility if you're using semantic roles */
+  cursor: none;
+}
+
+/* src/index.css or src/App.css */
+
+.lottie-cursor-container {
+  cursor: url('./assets/BADMINTON_BIRDIE.json') 16 16; /* Use your cursor image and specify hotspot */
+}
+
+/* Ensure that all children inherit this cursor */
+.lottie-cursor-container * {
+  cursor: inherit !important;
+}
+
+/* Or, more specifically, target the button */
+.lottie-cursor-container .btn {
+  cursor: inherit !important;
+}
