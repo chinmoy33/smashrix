@@ -12,7 +12,7 @@ app.use(cors());
 //app.use(cors({ origin: "http://localhost:3000" }));
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://Smashrix.vercel.app",
+  "https://smashrix.vercel.app",
 ];
 
 app.use(

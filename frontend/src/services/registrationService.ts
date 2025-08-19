@@ -6,7 +6,7 @@ import { Registration } from "../types/Event.ts";
 const API_BASE_URL =
   import.meta.env.MODE === 'development'
     ? "http://localhost:3002" // for local dev with Nginx proxy (Docker)
-    : 'https://recommendation-service-r2gb.onrender.com'; // for production
+    : 'https://smashrix-backend.onrender.com'; // for production
 
 const registrationApi = axios.create({
   baseURL: API_BASE_URL, // direct microservice URL
