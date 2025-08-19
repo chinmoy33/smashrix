@@ -2,10 +2,12 @@
 import axios from "axios";
 import { Event, Category } from "../types/Event.ts";
 
+const BACKEND_API_URL = import.meta.env.VITE_API_URL ;
+
 const API_BASE_URL =
   import.meta.env.MODE === 'development'
     ? "http://localhost:3002" // for local dev with Nginx proxy (Docker)
-    : 'https://smashrix-backend.onrender.com'; // for production
+    : BACKEND_API_URL; // for production
 
 const hostApi = axios.create({
   baseURL: API_BASE_URL, // direct microservice URL
