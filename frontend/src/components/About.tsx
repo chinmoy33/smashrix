@@ -8,6 +8,9 @@ import mridul from '../assets/Mridul.webp';
 import iran from '../assets/iran.jpg';
 import ishita from '../assets/ishita.jpg';
 import angaraj from '../assets/angaraj.jpg';
+import rohan from '../assets/rohan.jpg';
+import kalpeeta from '../assets/kalpita.jpg';
+import antara from '../assets/antara.jpg';
 
 const About: React.FC = () => {
   const coaches = [
@@ -33,7 +36,7 @@ const About: React.FC = () => {
       phone: "6900300469"
     },
     {
-      id: 7,
+      id: 3,
       name: "Angaraj Thengal",
       role: "Executive Member",
       experience: "4th year",
@@ -44,7 +47,40 @@ const About: React.FC = () => {
       phone: "9864724303"
     },
     {
-      id: 3,
+      id: 4,
+      name: "Rohan Borkotoky",
+      role: "Executive Member",
+      experience: "4th year",
+      //specialization: "Sports Conditioning",
+      image: rohan,
+      //achievements: ["Sports Medicine Degree", "Certified Strength Coach", "Injury Prevention Expert"],
+      email: "rohanborkotoky123@gmail.com",
+      phone: "9707824182"
+    },
+    {
+      id: 5,
+      name: "Kalpeeta Sarma",
+      role: "Executive Member",
+      experience: "4th year",
+      //specialization: "Sports Conditioning",
+      image: kalpeeta,
+      //achievements: ["Sports Medicine Degree", "Certified Strength Coach", "Injury Prevention Expert"],
+      email: "kalpeetasarma2003@gmail.com",
+      phone: "9101776681"
+    },
+    {
+      id: 6,
+      name: "Antara Talukdar",
+      role: "Executive Member",
+      experience: "4th year",
+      //specialization: "Sports Conditioning",
+      image: antara,
+      //achievements: ["Sports Medicine Degree", "Certified Strength Coach", "Injury Prevention Expert"],
+      email: "antaratalukdar31@gmail.com",
+      phone: "9387123106"
+    },
+    {
+      id: 7,
       name: "Mridul Hazarika",
       role: "Executive Member",
       experience: "3rd year",
@@ -55,7 +91,7 @@ const About: React.FC = () => {
       phone: "8638911494"
     },
     {
-      id: 4,
+      id: 8,
       name: "Diptangshu Parashar",
       role: "Executive Member",
       experience: "3rd year",
@@ -66,7 +102,7 @@ const About: React.FC = () => {
       phone: "7099662292"
     },
     {
-      id: 5,
+      id: 9,
       name: "Ishita Das",
       role: "Executive Member",
       experience: "3rd year",
@@ -77,7 +113,7 @@ const About: React.FC = () => {
       phone: "9864869881"
     },
     {
-      id: 6,
+      id: 10,
       name: "Dijit Gautam",
       role: "Executive Member",
       experience: "2nd year",
@@ -88,7 +124,7 @@ const About: React.FC = () => {
       phone: "9395982341"
     },
     {
-      id: 7,
+      id: 11,
       name: "Orin Kashyap",
       role: "Executive Member",
       experience: "2nd year",

@@ -350,7 +350,7 @@ const AdminDashboard: React.FC = () => {
 
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 min-h-screen bg-base-100 shadow-lg">
+        <div className="w-64 min-h-screen bg-base-100 shadow-lg hidden md:block">
           <ul className="menu p-4 space-y-2">
             <li>
               <button
@@ -389,6 +389,59 @@ const AdminDashboard: React.FC = () => {
               </button>
             </li>
           </ul>
+        </div>
+
+        {/* Mobile Drawer */}
+        <div className="md:hidden">
+          <div className="drawer">
+            <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
+            <div className="drawer-content">
+              <label htmlFor="dashboard-drawer" className="btn btn-ghost">
+                ☰ Menu
+              </label>
+            </div>
+            <div className="drawer-side">
+              <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
+              <ul className="menu p-4 w-64 min-h-full bg-base-100">
+                <li>
+              <button
+                className={`${activeTab === 'overview' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
+                onClick={() => setActiveTab('overview')}
+              >
+                <BarChart3 className="w-5 h-5" />
+                Overview
+              </button>
+            </li>
+            <li>
+              <button
+                className={`${activeTab === 'events' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
+                onClick={() => setActiveTab('events')}
+              >
+                <Calendar className="w-5 h-5" />
+                Events
+              </button>
+            </li>
+            {/* <li>
+              <button
+                className={`${activeTab === 'matchmaking' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
+                onClick={() => setActiveTab('matchmaking')}
+              >
+                <Trophy className="w-5 h-5" />
+                Matchmaking
+              </button>
+            </li> */}
+            <li>
+              <button
+                className={`${activeTab === 'players' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
+                onClick={() => setActiveTab('players')}
+              >
+                <Users className="w-5 h-5" />
+                Players
+              </button>
+            </li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         {/* Main Content */}
@@ -447,7 +500,7 @@ const AdminDashboard: React.FC = () => {
       <div className="card-body">
         <h2 className="card-title text-neutral mb-4">Event Registrations</h2>
         <div className="overflow-x-auto">
-          <table className="table table-zebra w-full">
+          <table className="table table-sm sm:table-md table-zebra w-full">
             <thead>
               <tr className="text-neutral">
                 <th>Name(s)</th>
