@@ -9,7 +9,7 @@ import iran from '../assets/iran.jpg';
 import ishita from '../assets/ishita.jpg';
 import angaraj from '../assets/angaraj.jpg';
 import rohan from '../assets/rohan.jpg';
-import kalpeeta from '../assets/kalpita.jpg';
+import kalpeeta from '../assets/kalpeeta.jpg';
 import antara from '../assets/antara.jpg';
 
 const About: React.FC = () => {
