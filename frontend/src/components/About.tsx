@@ -11,6 +11,7 @@ import angaraj from '../assets/angaraj.jpg';
 import rohan from '../assets/rohan.jpg';
 import kalpeeta from '../assets/kalpeeta.jpg';
 import antara from '../assets/antara.jpg';
+import dhrubasir from '../assets/dhrubasir.jpg';
 
 const About: React.FC = () => {
   const coaches = [
@@ -137,6 +138,17 @@ const About: React.FC = () => {
     
   ];
 
+      let myVariable;
+
+    // Check the window width
+    if (window.innerWidth < 400) {
+      // If the window is less than 400px wide, set the variable to -100
+      myVariable = "-100px";
+    } else {
+      // Otherwise, set the variable to -350
+      myVariable = "-350px";
+    }
+
   return (
     <section className="min-h-screen py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -165,6 +177,73 @@ const About: React.FC = () => {
               To be recognized as the leading badminton club that produces champions, promotes the sport, 
               and creates lifelong friendships through the love of badminton.
             </p>
+          </div>
+        </div>
+        
+        {/* Teacher-incharge Section */}
+        <div className="mb-16">
+          <h3 className="text-3xl font-bold text-center text-gray-900 mb-12">Our Teacher-incharge</h3>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+
+              <div 
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              >
+                <div className="w-full h-64 overflow-hidden"> 
+                <img
+                src={dhrubasir}
+                alt="Dr. Dhrubajyoti Baruah"
+                className="w-full object-cover"
+                style={{ transform: `translateY(${myVariable})` }}
+                />
+                </div>
+                
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xl font-bold text-gray-900">Dr. Dhrubajyoti Baruah</h4>
+                    <div className="flex items-center text-yellow-500">
+                      <Star size={16} fill="currentColor" />
+                      <Star size={16} fill="currentColor" />
+                      <Star size={16} fill="currentColor" />
+                      <Star size={16} fill="currentColor" />
+                      <Star size={16} fill="currentColor" />
+                    </div>
+                  </div>
+                  
+                  <p className="text-orange-600 font-semibold mb-2">Teacher-incharge</p>
+                  {/* <p className="text-gray-600 mb-4"><strong>Specialization:</strong> {coach.specialization}</p> */}
+                  
+                  {/* <div className="mb-4">
+                    <h5 className="font-semibold text-gray-900 mb-2 flex items-center">
+                      <Award size={16} className="mr-2 text-yellow-600" />
+                      Key Achievements
+                    </h5>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {coach.achievements.map((achievement, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="w-2 h-2 bg-orange-600 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                          {achievement}
+                        </li>
+                      ))}
+                    </ul>
+                  </div> */}
+                  
+                  <div className="border-t pt-4 flex flex-col space-y-2">
+                    <a href={`mailto:dhrubaghy@gmail.com`}>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Mail size={16} className="mr-2 text-gray-500" />
+                      dhrubaghy@gmail.com
+                    </div>
+                    </a>
+                    <a href={`tel:9864321999`}>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Phone size={16} className="mr-2 text-gray-500" />
+                      9864321999
+                    </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
 
@@ -220,7 +299,7 @@ const About: React.FC = () => {
                   </div> */}
                   
                   <div className="border-t pt-4 flex flex-col space-y-2">
-                    <a href={`mailto:${coach.phone}`}>
+                    <a href={`mailto:${coach.email}`}>
                     <div className="flex items-center text-sm text-gray-600">
                       <Mail size={16} className="mr-2 text-gray-500" />
                       {coach.email}
