@@ -96,8 +96,8 @@ function App() {
             <div>
               <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
               <ul className="space-y-2 text-gray-300">
-                <li>Phone 1: 6900300469</li>
-                <li>Phone 2: 7896911752</li>
+                <a href={`tel:6900300469`} className="text-gray-300 hover:text-orange-400 transition-colors"><li>Phone 1: 6900300469</li></a>
+                <a href={`tel:7896911752`} className="text-gray-300 hover:text-orange-400 transition-colors"><li>Phone 2: 7896911752</li></a>
               </ul>
             </div>
             
