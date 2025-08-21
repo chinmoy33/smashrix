@@ -10,6 +10,8 @@ import { hostService } from '../services/hostService';
 import { registrationService } from '../services/registrationService';
 import { Registration } from '../types/Event';
 import { Edit, Trash2 } from 'lucide-react';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -156,6 +158,50 @@ const AdminDashboard: React.FC = () => {
     upcomingEvents: events.filter(e => new Date(e.date) > new Date()).length,
     activeMatches: 12
   };
+
+  // Export to CSV
+  const handleExportCSV = () => {
+    const headers = ["Name(s)", "Phone", "Gender(s)", "Event ID"];
+    const rows = players.map((reg) => [
+      reg.player.name2 ? `${reg.player.name1} & ${reg.player.name2}` : reg.player.name1,
+      reg.phone.phone2 ? `${reg.phone.phone1}, ${reg.phone.phone2}` : reg.phone.phone1,
+      reg.gender.gender2 ? `${reg.gender.gender1}, ${reg.gender.gender2}` : reg.gender.gender1,
+      reg.eventId,
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows].map((e) => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "players.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Export to PDF
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Player Registrations", 14, 15);
+    const tableColumn = ["Name(s)", "Phone", "Gender(s)", "Event ID"];
+    const tableRows = players.map((reg) => [
+      reg.player.name2 ? `${reg.player.name1} & ${reg.player.name2}` : reg.player.name1,
+      reg.phone.phone2 ? `${reg.phone.phone1}, ${reg.phone.phone2}` : reg.phone.phone1,
+      reg.gender.gender2 ? `${reg.gender.gender1}, ${reg.gender.gender2}` : reg.gender.gender1,
+      reg.eventId,
+    ]);
+
+    (doc as any).autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+  doc.save("players.pdf");
+};
 
   const renderOverview = () => (
     <div className="space-y-6">
@@ -450,55 +496,18 @@ const AdminDashboard: React.FC = () => {
           {activeTab === 'events' && renderEvents()}
           {/* {activeTab === 'matchmaking' && <MatchmakingPanel events={events} players={players} />} */}
           {activeTab === 'players' && (
-            // <div className="card bg-base-100 shadow-lg">
-            //   <div className="card-body">
-            //     <h2 className="card-title text-neutral mb-4">Player Management</h2>
-            //     <div className="overflow-x-auto">
-            //       <table className="table table-zebra w-full">
-            //         <thead>
-            //           <tr className="text-neutral">
-            //             <th>Name</th>
-            //             <th>Email</th>
-            //             <th>Skill Level</th>
-            //             <th>Preferred Category</th>
-            //             <th>Registered Events</th>
-            //             <th>Actions</th>
-            //           </tr>
-            //         </thead>
-            //         <tbody>
-            //           {players.map((player) => (
-            //             <tr key={player.id} className="hover">
-            //               <td className="font-semibold text-neutral">{player.name}</td>
-            //               <td className="text-neutral">{player.email}</td>
-            //               <td>
-            //                 <span className={`badge ${
-            //                   player.skill_level === 'Professional' ? 'badge-error' :
-            //                   player.skill_level === 'Advanced' ? 'badge-warning' :
-            //                   player.skill_level === 'Intermediate' ? 'badge-info' : 'badge-success'
-            //                 }`}>
-            //                   {player.skill_level}
-            //                 </span>
-            //               </td>
-            //               <td>
-            //                 <span className="badge badge-outline badge-primary">{player.preferred_category}</span>
-            //               </td>
-            //               <td className="text-neutral">{player.registered_events.length} events</td>
-            //               <td>
-            //                 <div className="flex gap-2">
-            //                   <button className="btn btn-xs btn-outline btn-info">View</button>
-            //                   <button className="btn btn-xs btn-outline btn-warning">Edit</button>
-            //                 </div>
-            //               </td>
-            //             </tr>
-            //           ))}
-            //         </tbody>
-            //       </table>
-            //     </div>
-            //   </div>
-            // </div>
             <div className="card bg-base-100 shadow-lg">
       <div className="card-body">
-        <h2 className="card-title text-neutral mb-4">Event Registrations</h2>
+        <h2 className="card-title text-neutral mb-4">Event Registrations
+          <div className="flex gap-2">
+            <button className="btn btn-sm btn-outline btn-primary" onClick={handleExportCSV}>
+              Export CSV
+            </button>
+            <button className="btn btn-sm btn-outline btn-secondary" onClick={handleExportPDF}>
+              Export PDF
+            </button>
+          </div>
+        </h2>
         <div className="overflow-x-auto">
           <table className="table table-sm sm:table-md table-zebra w-full">
             <thead>

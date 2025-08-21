@@ -95,20 +95,20 @@ const Events: React.FC = () => {
       winner: "Sarah & Mike"
     }
   ];
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await hostService.getHostedEvents();
-        if (response.success) {
-          setUpcomingEvents(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching hosted events:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchEvents = async () => {
+  //     try {
+  //       const response = await hostService.getHostedEvents();
+  //       if (response.success) {
+  //         setUpcomingEvents(response.data);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching hosted events:", error);
+  //     }
+  //   };
 
-    fetchEvents();
-  }, []);
+  //   fetchEvents();
+  // }, []);
 
   const handleRegisterSingle = (id:bigint,newRegister: Omit<SinglesPlayer, 'id' | 'created_at'>) => {
       // const event: Event = {
