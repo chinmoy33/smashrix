@@ -37,6 +37,11 @@ interface deleteResponse {
   message:string,
 };
 
+interface toggleEligibilityResponse {
+  success:boolean,
+  message:string,
+};
+
 interface formDatatype{
   interested:string,
   type_of_mutual_fund:string,
@@ -72,12 +77,16 @@ export const registrationService = {
     const response = await registrationApi.post(`/api/registration/registerEvent/${id}`,formData);
     return response.data;
   },
-  async updateEvent(id:number,formData:formDatatype): Promise<hostResponse> {
-    const response = await registrationApi.post(`/api/registration/updateEvent/${id}`,formData);
+  async updateRegistration(id:bigint,formData:SingleDataType|DoubleDataType): Promise<hostResponse> {
+    const response = await registrationApi.post(`/api/registration/updateRegistration/${id}`,formData);
     return response.data;
   },
-  async deleteEvent(id:number): Promise<deleteResponse> {
-    const response = await registrationApi.delete(`/api/registration/deleteEvent/${id}`);
+  async deleteRegistration(id:bigint): Promise<deleteResponse> {
+    const response = await registrationApi.delete(`/api/registration/deleteRegistration/${id}`);
+    return response.data;
+  },
+  async toggleEligibility(id:bigint,eligible:boolean): Promise<toggleEligibilityResponse> {
+    const response = await registrationApi.post(`/api/registration/toggleEligibility/${id}`,{eligible});
     return response.data;
   }
 };

@@ -143,7 +143,7 @@ const About: React.FC = () => {
     // Check the window width
     if (window.innerWidth < 400) {
       // If the window is less than 400px wide, set the variable to -100
-      myVariable = "-100px";
+      myVariable = "-50px";
     } else {
       // Otherwise, set the variable to -350
       myVariable = "-350px";

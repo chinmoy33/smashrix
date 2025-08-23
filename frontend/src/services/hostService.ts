@@ -30,6 +30,11 @@ interface deleteResponse {
   message:string,
 };
 
+interface toggleCompletedResponse {
+  success:boolean,
+  message:string,
+};
+
 interface formDatatype{
   interested:string,
   type_of_mutual_fund:string,
@@ -60,12 +65,16 @@ export const hostService = {
     const response = await hostApi.post("/api/host/hostEvent",formData);
     return response.data;
   },
-  async updateEvent(id:number,formData:formDatatype): Promise<hostResponse> {
+  async updateEvent(id:bigint|null,formData:EventDataType): Promise<hostResponse> {
     const response = await hostApi.post(`/api/host/updateEvent/${id}`,formData);
     return response.data;
   },
-  async deleteEvent(id:number): Promise<deleteResponse> {
+  async deleteEvent(id:bigint): Promise<deleteResponse> {
     const response = await hostApi.delete(`/api/host/deleteEvent/${id}`);
     return response.data;
-  }
+  },
+  async toggleCompleted(id:bigint|null,completed:boolean): Promise<toggleCompletedResponse> {
+    const response = await hostApi.post(`/api/host/toggleComplted/${id}`,{completed});
+    return response.data;
+  },
 };

@@ -6,10 +6,11 @@ import { hostService } from '../../services/hostService';
 interface EventHostingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (event: Omit<Event, 'id' | 'created_at'>) => void;
+  onSubmit: (id:bigint|null,event: Omit<Event, 'id' | 'created_at'>) => void;
+  eventId: bigint | null;
 }
 
-const EventHostingModal: React.FC<EventHostingModalProps> = ({ isOpen, onClose, onSubmit }) => {
+const EventHostingModal: React.FC<EventHostingModalProps> = ({ isOpen, onClose, onSubmit, eventId}) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -24,6 +25,15 @@ const EventHostingModal: React.FC<EventHostingModalProps> = ({ isOpen, onClose, 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const categories: Category[] = ['Singles', 'Doubles', 'Mixed Doubles'];
+
+  const formatToAmPm = (time: string) => {
+  if (!time) return "";
+  const [hourStr, minute] = time.split(":");
+  let hour = parseInt(hourStr, 10);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12; // convert "0" → "12"
+  return `${hour}:${minute} ${ampm}`;
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -43,7 +53,12 @@ const EventHostingModal: React.FC<EventHostingModalProps> = ({ isOpen, onClose, 
     e.preventDefault();
     
     if (validateForm()) {
-      onSubmit(formData);
+
+        const formattedData = {
+        ...formData,
+        time: formatToAmPm(formData.time)  // convert here
+      };
+      onSubmit(eventId,formattedData);
       setFormData({
         title: '',
         description: '',

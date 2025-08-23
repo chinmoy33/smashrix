@@ -10,7 +10,7 @@ const getRegister = async (req, res) => {
     }
 
     if (!data || data.length === 0) {
-      return res.status(404).json({ message: "No Registered Players found" });
+      return res.status(200).json({ success:true, message: "No Registered Players found",data: data });
     }
 
     return res.status(200).json({ success: true, message: "fetched registration details", data: data });
@@ -54,68 +54,62 @@ const register = async (req, res) => {
   }
 };
 
-const updateRegister = async (req, res) => {
+const updateRegistration = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.id; // uuid
     const {
-      interested,
-      contacted,
-      type_of_mutual_fund,
-      amount,
-      final_amount,
-      kyc_completed=false,
-      final_disbursed_amt,
+      name1,
+      phone1,
+      gender1,
+      name2,
+      phone2,
+      gender2 = "",
+      eventId, // int8
     } = req.body;
-    
-    let new_final_disbursed_amt=null
-    if(!kyc_completed && interested==="yes")
-    {
-      new_final_disbursed_amt=0;
-    }
-    else
-    {
-      new_final_disbursed_amt=final_disbursed_amt
-    }
 
-    if (!id) {
-      return res.status(400).json({ success: false, message: "Missing ID parameter" });
-    }
-    
     const { data: updateData, error: updateError } = await supabase
       .from("Registration")
       .update({
-        interested,
-        type_of_mutual_fund,
-        amount,
-        final_amount,
-        kyc_completed,
-        final_disbursed_amt:new_final_disbursed_amt,
+        player: { name1, name2 },
+        gender: { gender1, gender2 },
+        phone: { phone1, phone2 },
+        eventId, // keep eventId as int8
       })
-      .eq("Registration_id", id)
+      .eq("id", id) // matches uuid
       .select();
 
     if (updateError) {
       console.error("Supabase update error:", updateError);
-      return res.status(500).json({ success: false, message: "Failed to update Registration" });
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to update Registration" });
     }
 
-    return res.status(200).json({ success: true, message: "Registration updated successfully", data:updateData });
+    return res.status(200).json({
+      success: true,
+      message: "Registration updated successfully",
+      data: updateData,
+    });
   } catch (error) {
     console.error("Unexpected error:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
-const deleteRegister = async(req,res) => {
+
+
+const deleteRegistration = async(req,res) => {
     const id = req.params.id;
     try{
-        const { data: updateData, error: updateError } = await supabase
+        const { data: deleteData, error: deleteError } = await supabase
         .from("Registration")
         .delete()
-        .eq("Registration_id", id)
+        .eq("id", id)
 
-        if (updateError) {
-          console.error("Supabase update error:", updateError);
+        if (deleteError) {
+          console.error("Supabase delete error:", deleteError);
           return res.status(500).json({ success: false, message: "Failed to Delete registration" });
         }
 
@@ -128,8 +122,42 @@ const deleteRegister = async(req,res) => {
     }
 }
 
+const toggleEligibility = async (req, res) => {
+  try {
+    const id = req.params.id; // uuid
+    const {
+      eligible
+    } = req.body;
+
+    const { data: updateData, error: updateError } = await supabase
+      .from("Registration")
+      .update({
+        eligible:!eligible
+      })
+      .eq("id", id) // matches uuid
+      .select();
+
+    if (updateError) {
+      console.error("Supabase update error:", updateError);
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to toggle eligibility" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Eligibility status updated",
+    });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
 
 module.exports = {
-  getRegister,register,updateRegister,deleteRegister
+  getRegister,register,updateRegistration,deleteRegistration,toggleEligibility
 };
 

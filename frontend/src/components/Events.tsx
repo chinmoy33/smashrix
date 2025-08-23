@@ -19,85 +19,13 @@ const Events: React.FC = () => {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [eventDetails, setEventDetails] = useState<EventDetails|null>(null);
-  // const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([{
-  //     id: 1,
-  //     title: "Smashrix Open Championship",
-  //     date: "March 15, 2024",
-  //     time: "9:00 AM - 6:00 PM",
-  //     venue: "Main Arena, Smashrix Club",
-  //     category: "Singles",
-  //     description: "Our flagship annual tournament featuring singles and doubles competitions across multiple categories.",
-  //     amount: "50",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Junior Development Camp",
-  //     date: "March 22-24, 2024",
-  //     time: "10:00 AM - 4:00 PM",
-  //     location: "Training Courts 1-4",
-  //     type: "Training Camp",
-  //     level: "Under 16",
-  //     prize: "Certificate of Completion",
-  //     image: "https://images.pexels.com/photos/6944174/pexels-photo-6944174.jpeg",
-  //     description: "Intensive 3-day training camp focused on fundamental techniques and tactical awareness for young players.",
-  //     participants: 24,
-  //     registrationFee: "$150",
-  //     status: "Few Spots Left"
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Mixed Doubles Social Night",
-  //     date: "March 28, 2024",
-  //     time: "7:00 PM - 10:00 PM",
-  //     location: "Courts 5-8",
-  //     type: "Social Event",
-  //     level: "Intermediate",
-  //     prize: "Fun & Prizes",
-  //     image: "https://images.pexels.com/photos/6153354/pexels-photo-6153354.jpeg",
-  //     description: "Fun mixed doubles tournament followed by dinner and socializing. Perfect for meeting new playing partners!",
-  //     participants: 40,
-  //     registrationFee: "$25",
-  //     status: "Open Registration"
-  //   },
-  //   {
-  //     id: 4,
-  //     title: "Advanced Techniques Masterclass",
-  //     date: "April 5, 2024",
-  //     time: "2:00 PM - 5:00 PM",
-  //     location: "Training Center",
-  //     type: "Masterclass",
-  //     level: "Advanced",
-  //     prize: "Video Analysis Session",
-  //     image: "https://images.pexels.com/photos/1103829/pexels-photo-1103829.jpeg",
-  //     description: "Learn advanced shot techniques and strategies from our head coach Sarah Chen.",
-  //     participants: 16,
-  //     registrationFee: "$75",
-  //     status: "Open Registration"
-  //   }]);
+  const [loading, setLoading] = useState(false);
 
-  const pastEvents = [
-    {
-      title: "Winter Championship 2024",
-      date: "February 10, 2024",
-      participants: 96,
-      winner: "Alex Thompson"
-    },
-    {
-      title: "New Year Friendly Tournament",
-      date: "January 7, 2024",
-      participants: 64,
-      winner: "Team Phoenix"
-    },
-    {
-      title: "Holiday Mixed Doubles",
-      date: "December 20, 2023",
-      participants: 48,
-      winner: "Sarah & Mike"
-    }
-  ];
+
   // useEffect(() => {
   //   const fetchEvents = async () => {
   //     try {
+  //       setLoading(true);
   //       const response = await hostService.getHostedEvents();
   //       if (response.success) {
   //         setUpcomingEvents(response.data);
@@ -105,20 +33,18 @@ const Events: React.FC = () => {
   //     } catch (error) {
   //       console.error("Error fetching hosted events:", error);
   //     }
+  //     finally{
+  //       setLoading(false);
+  //     }
   //   };
 
   //   fetchEvents();
   // }, []);
 
   const handleRegisterSingle = (id:bigint,newRegister: Omit<SinglesPlayer, 'id' | 'created_at'>) => {
-      // const event: Event = {
-      //   ...newEvent,
-      //   id: events.length + 1,
-      //   created_at: new Date().toISOString()
-      // };
-      // setEvents([...events, event]);
-      // setIsEventModalOpen(false);
+     
       try{
+        setLoading(true);
           registrationService.registerEvent(id,newRegister as SinglesPlayer)
         .then(response => {
           if (response.success) {
@@ -140,19 +66,15 @@ const Events: React.FC = () => {
       }
       finally{
         setIsRegistrationModalOpen(false);
+        setLoading(false);
       }
       
     };
 
     const handleRegisterDouble = (id:bigint,newRegister: Omit<DoublesPlayer, 'id' | 'created_at'>) => {
-      // const event: Event = {
-      //   ...newEvent,
-      //   id: events.length + 1,
-      //   created_at: new Date().toISOString()
-      // };
-      // setEvents([...events, event]);
-      // setIsEventModalOpen(false);
+      
       try{
+        setLoading(true);
           registrationService.registerEvent(id,newRegister as DoublesPlayer)
         .then(response => {
           if (response.success) {
@@ -174,21 +96,10 @@ const Events: React.FC = () => {
       }
       finally{
         setIsRegistrationModalOpen(false);
+        setLoading(false);
       }
       
     };
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Open Registration':
-        return 'bg-green-100 text-green-800';
-      case 'Few Spots Left':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Registration Closed':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -218,19 +129,18 @@ const Events: React.FC = () => {
         </div>
 
         {/* Upcoming Events */}
+        
         <div className="mb-16">
           <h3 className="text-3xl font-bold text-gray-900 mb-8 flex items-center">
             <Calendar className="mr-3 text-orange-600" size={32} />
             Upcoming Events
           </h3>
-          {upcomingEvents.length === 0 ? (
-            // <div className="flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white rounded-xl shadow-lg">
-            //   <Calendar className="h-16 w-16 text-gray-400 mb-4" />
-            //   <h3 className="text-2xl font-semibold text-gray-900 mb-2">No Events Available</h3>
-            //   <p className="text-lg text-gray-500 text-center">
-            //     Check back soon for new events and tournaments!
-            //   </p>
-            // </div>
+          {loading ? (
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-primary mx-auto mb-4"></div>
+                <p className="text-gray-400">Loading Event Details...</p>
+            </div>) :
+          upcomingEvents.length === 0 ? (
             <EmptyEventsPlaceholder />
           ):(
           <div className="grid lg:grid-cols-2 gap-8">
@@ -298,53 +208,7 @@ const Events: React.FC = () => {
           </div>)}
         </div>
 
-        {/* Recent Events */}
-        {/* <div className="bg-white rounded-xl shadow-lg p-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <Trophy className="mr-3 text-yellow-600" size={28} />
-            Recent Event Winners
-          </h3>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {pastEvents.map((event, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
-                <h4 className="font-semibold text-gray-900 mb-2">{event.title}</h4>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <div className="flex items-center">
-                    <Calendar size={14} className="mr-2" />
-                    {event.date}
-                  </div>
-                  <div className="flex items-center">
-                    <Users size={14} className="mr-2" />
-                    {event.participants} participants
-                  </div>
-                  <div className="flex items-center text-yellow-600 font-medium">
-                    <Star size={14} className="mr-2" fill="currentColor" />
-                    Winner: {event.winner}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div> */}
-
-        {/* Call to Action */}
-        {/* <div className="text-center mt-16">
-          <div className="bg-gradient-to-r from-orange-600 to-blue-600 rounded-xl p-8 text-white">
-            <h3 className="text-2xl font-bold mb-4">Ready to Join Our Next Event?</h3>
-            <p className="text-lg mb-6">
-              Don't miss out on exciting tournaments and training opportunities. Register today and be part of the Smashrix community!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-orange-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition-colors duration-200">
-                View All Events
-              </button>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-orange-600 px-6 py-3 rounded-lg font-semibold transition-all duration-200">
-                Contact Us
-              </button>
-            </div>
-          </div>
-        </div> */}
+        
         <RegistrationModal
         isOpen={isRegistrationModalOpen}
         onClose={() => setIsRegistrationModalOpen(false)}

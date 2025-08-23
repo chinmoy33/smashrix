@@ -15,6 +15,8 @@ body {
 /* Add a rule to override the default pointer behavior on interactive elements */
 button,
 a,
+input[type="text"],
+select,
 input[type="button"],
 input[type="submit"],
 input[type="reset"],
@@ -36,4 +38,10 @@ input[type="reset"],
 /* Or, more specifically, target the button */
 .lottie-cursor-container .btn {
   cursor: inherit !important;
+}
+
+/* index.css */
+.screenshot-mode * {
+  background-color: #ffffff !important;
+  color: #000000 !important;
 }

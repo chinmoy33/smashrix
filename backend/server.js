@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const registrationRoute = require("./routes/registrationRoute");
 const hostRoute = require("./routes/hostRoute");
+const matchRoute = require("./routes/matchRoute");
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -31,6 +32,7 @@ app.use(express.json());
 
 app.use("/api/registration", registrationRoute);
 app.use("/api/host", hostRoute)
+app.use("/api/matches", matchRoute)
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

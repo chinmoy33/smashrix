@@ -43,11 +43,12 @@ export interface DoublesPlayer {
 }
 
 export interface Registration {
-  id: number; 
+  id: bigint; 
   player: {name1: string, name2?: string};
   gender: {gender1: string, gender2?: string};
   phone: {phone1: string, phone2?: string};
   eventId: bigint;
+  eligible:boolean;
 }
 
 export interface Match {

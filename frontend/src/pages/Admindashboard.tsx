@@ -11,53 +11,41 @@ import { registrationService } from '../services/registrationService';
 import { Registration } from '../types/Event';
 import { Edit, Trash2 } from 'lucide-react';
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
+import {Category} from '../types/Event';
+import { DoublesPlayer, SinglesPlayer } from '../types/Event.ts';
+import RegistrationModal from '../components/RegistrationModal';
+import SearchBar from '../components/Admin/SearchBar';
+import DescriptionWithReadMore from '../components/Admin/DescriptionWithReadMore.tsx';
+import Sidebar from '../components/Admin/Sidebar';
+import ConfirmDeleteModal from '../components/Admin/ConfirmDeleteModal.tsx';
+import {teams} from '../Data/teams.ts'
+
+interface EventDetails {
+  id: bigint;
+  category: Category|null;
+  playerid:bigint;
+}
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [events, setEvents] = useState<Event[]>([]);
-
+  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+  const [eventDetails, setEventDetails] = useState<EventDetails|null>(null);
+  const [loading, setLoading] = useState(false);
   const [players, setPlayers] = useState<Registration[]>([]);
-  // const [players] = useState<Player[]>([
-  //   {
-  //     id: 1,
-  //     name: "Alex Johnson",
-  //     email: "alex@example.com",
-  //     skill_level: "Advanced",
-  //     preferred_category: "Singles",
-  //     registered_events: [1],
-  //     created_at: "2024-02-15T09:00:00Z"
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Sarah Chen",
-  //     email: "sarah@example.com",
-  //     skill_level: "Professional",
-  //     preferred_category: "Doubles",
-  //     registered_events: [1, 2],
-  //     created_at: "2024-02-20T11:30:00Z"
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Mike Rodriguez",
-  //     email: "mike@example.com",
-  //     skill_level: "Intermediate",
-  //     preferred_category: "Mixed Doubles",
-  //     registered_events: [2],
-  //     created_at: "2024-02-25T16:45:00Z"
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Emma Wilson",
-  //     email: "emma@example.com",
-  //     skill_level: "Advanced",
-  //     preferred_category: "Singles",
-  //     registered_events: [1],
-  //     created_at: "2024-03-01T08:15:00Z"
-  //   }
-  // ]);
+  const [refreshPlayers, setRefreshPlayers] = useState(false);
+  const [refreshEvents, setRefreshEvents] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [update, setUpdate] = useState(false);
+  const [eventId, setEventId] = useState<bigint|null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<bigint|null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isDeleteEvent, setIsDeleteEvent] = useState(false);
+  
   useEffect(() => {
     const getUser = async () => {
       const {
@@ -75,8 +63,28 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const response = await hostService.getHostedEvents();
+        if (response.success) {
+          setEvents(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching hosted events:", error);
+      }
+      finally{
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [refreshEvents]);
+
+  useEffect(() => {
     const fetchPlayers = async () => {
       try {
+        setLoading(true);
         const response = await registrationService.getRegistrations();
         if (response.success) {
           console.log("Fetched registrations:", response.data);
@@ -85,26 +93,19 @@ const AdminDashboard: React.FC = () => {
       } catch (error) {
         console.error("Error fetching players:", error);
       }
-    };
-
-    fetchPlayers();
-  }, []);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await hostService.getHostedEvents();
-        if (response.success) {
-          setEvents(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching hosted events:", error);
+      finally{
+        setLoading(false);
       }
     };
 
-    fetchEvents();
-  }, []);
+    fetchPlayers();
+  }, [refreshPlayers]);
+
+  
   const navigate = useNavigate();
+
+  const refresh = () => setRefreshPlayers(prev => !prev);
+  const refreshEventsFunction = () => setRefreshEvents(prev => !prev);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -117,15 +118,10 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleEventCreate = (newEvent: Omit<Event, 'id' | 'created_at'>) => {
-    // const event: Event = {
-    //   ...newEvent,
-    //   id: events.length + 1,
-    //   created_at: new Date().toISOString()
-    // };
-    // setEvents([...events, event]);
-    // setIsEventModalOpen(false);
+  const handleEventCreate = (id:bigint|null,newEvent: Omit<Event, 'id' | 'created_at'>) => {
+    
     try{
+        setLoading(true);
         hostService.hostEvent(newEvent as Event)
       .then(response => {
         if (response.success) {
@@ -148,6 +144,42 @@ const AdminDashboard: React.FC = () => {
     }
     finally{
       setIsEventModalOpen(false);
+      setLoading(false);
+    }
+    
+  };
+
+  const handleEventUpdate = (id:bigint|null,newEvent: Omit<Event, 'id' | 'created_at'>) => {
+    
+    try{
+        setLoading(true);
+        hostService.updateEvent(id,newEvent as Event)
+      .then(response => {
+        if (response.success) {
+          console.log("Event edited successfully:", response.data);
+          setEvents(events.map(event => 
+              event.id === id ? { ...event, ...response.data } : event
+            ));
+          refreshEventsFunction();
+          setIsEventModalOpen(false);
+          toast.success("Event edited successfully");
+        } else {
+          toast.error(response.message);
+        }
+      })
+      .catch(error => {
+        console.error("Error hosting event:", error);
+        toast.error("Failed to update event");
+      });
+    }
+    catch(error){
+      console.error("Error in handleEventUpdate:", error);
+      toast.error("Failed to update event");
+    }
+    finally{
+      setIsEventModalOpen(false);
+      setLoading(false);
+      setUpdate(false);
     }
     
   };
@@ -155,221 +187,318 @@ const AdminDashboard: React.FC = () => {
   const stats = {
     totalEvents: events.length,
     totalPlayers: players.length,
-    upcomingEvents: events.filter(e => new Date(e.date) > new Date()).length,
-    activeMatches: 12
   };
+
+  const getEventName = (eventId: bigint) => {
+  const event = events.find((e) => e.id === eventId);
+  return event ? event.title : "Unknown Event";
+};
+  
+  const getEventCategory = (eventId: bigint) => {
+  const event = events.find((e) => e.id === eventId);
+  return event ? event.category : null;
+};
+
+const handleRegisterSingle = (id:bigint,newRegister: Omit<SinglesPlayer, 'id' | 'created_at'>) => {
+     
+      try{
+          setLoading(true);
+          registrationService.updateRegistration(id,newRegister as SinglesPlayer)
+        .then(response => {
+          if (response.success) {
+            //console.log("You have been registered successfully:", response.data)
+            setPlayers(players.map(player => 
+              player.id === id ? { ...player, ...response.data } : player
+            ));
+            refresh();
+            setIsRegistrationModalOpen(false);
+            toast.success("Registration updated successfully");
+          } else {
+            toast.error(response.message);
+          }
+        })
+        .catch(error => {
+          console.error("Error registering in event:", error);
+          toast.error("update failed");
+        });
+      }
+      catch(error){
+        console.error("Error in handleEventCreate:", error);
+        toast.error("update failed");
+      }
+      finally{
+        setIsRegistrationModalOpen(false);
+        setLoading(false);
+      }
+      
+    };
+
+    const handleRegisterDouble = (id:bigint,newRegister: Omit<DoublesPlayer, 'id' | 'created_at'>) => {
+      
+      try{
+          setLoading(true);
+          registrationService.updateRegistration(id,newRegister as DoublesPlayer)
+        .then(response => {
+          if (response.success) {
+            //console.log("Registration updated successfully:", response.data)
+            setPlayers(players.map(player => 
+              player.id === id ? { ...player, ...response.data } : player
+            ));
+            refresh();
+            setIsRegistrationModalOpen(false);
+            toast.success("Registration updated successfully");
+          } else {
+            toast.error(response.message);
+          }
+        })
+        .catch(error => {
+          console.error("Error registering in event:", error);
+          toast.error("Update failed");
+        });
+      }
+      catch(error){
+        console.error("Error in handleEventCreate:", error);
+        toast.error("Update failed");
+      }
+      finally{
+        setIsRegistrationModalOpen(false);
+        setLoading(false);
+      }
+      
+    };
 
   // Export to CSV
   const handleExportCSV = () => {
-    const headers = ["Name(s)", "Phone", "Gender(s)", "Event ID"];
-    const rows = players.map((reg) => [
-      reg.player.name2 ? `${reg.player.name1} & ${reg.player.name2}` : reg.player.name1,
-      reg.phone.phone2 ? `${reg.phone.phone1}, ${reg.phone.phone2}` : reg.phone.phone1,
-      reg.gender.gender2 ? `${reg.gender.gender1}, ${reg.gender.gender2}` : reg.gender.gender1,
-      reg.eventId,
-    ]);
+    setLoading(true);
+    try{
+      const headers = ["Name(s)", "Phone", "Gender(s)", "Event Name"];
+      const rows = players.map((reg) => [
+        reg.player.name2 ? `${reg.player.name1} & ${reg.player.name2}` : reg.player.name1,
+        reg.phone.phone2 ? `${reg.phone.phone1}, ${reg.phone.phone2}` : reg.phone.phone1,
+        reg.gender.gender2 ? `${reg.gender.gender1}, ${reg.gender.gender2}` : reg.gender.gender1,
+        getEventName(reg.eventId),
+      ]);
 
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [headers, ...rows].map((e) => e.join(",")).join("\n");
+      // Escape values properly
+      const escapeCSV = (value: any) => {
+        if (value == null) return "";
+        const str = String(value);
+        return str.includes(",") ? `"${str}"` : str;
+      };
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "players.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+      const csvContent =
+        "data:text/csv;charset=utf-8," +
+        [headers, ...rows]
+          .map((row) => row.map(escapeCSV).join(","))
+          .join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "players.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    catch (error) {
+      console.error("Error exporting CSV:", error);
+      toast.error("Failed to export CSV");
+    }
+    finally{
+      setLoading(false);
+    }
+};
+
 
   // Export to PDF
   const handleExportPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Player Registrations", 14, 15);
-    const tableColumn = ["Name(s)", "Phone", "Gender(s)", "Event ID"];
-    const tableRows = players.map((reg) => [
-      reg.player.name2 ? `${reg.player.name1} & ${reg.player.name2}` : reg.player.name1,
-      reg.phone.phone2 ? `${reg.phone.phone1}, ${reg.phone.phone2}` : reg.phone.phone1,
-      reg.gender.gender2 ? `${reg.gender.gender1}, ${reg.gender.gender2}` : reg.gender.gender1,
-      reg.eventId,
-    ]);
+    try{
+      const doc = new jsPDF();
 
-    (doc as any).autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-    });
+      doc.text("Player Registrations", 14, 15);
 
-  doc.save("players.pdf");
+      const tableColumn = ["Name(s)", "Phone", "Gender(s)", "Event Name"];
+      const tableRows = players.map((reg) => [
+        reg.player.name2 ? `${reg.player.name1} & ${reg.player.name2}` : reg.player.name1,
+        reg.phone.phone2 ? `${reg.phone.phone1}, ${reg.phone.phone2}` : reg.phone.phone1,
+        reg.gender.gender2 ? `${reg.gender.gender1}, ${reg.gender.gender2}` : reg.gender.gender1,
+        getEventName(reg.eventId),
+      ]);
+
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 20,
+      });
+
+      doc.save("players.pdf");
+    }
+    catch (error) {
+      console.error("Error exporting PDF:", error);
+      toast.error("Failed to export PDF");
+    }finally{
+      setLoading(false);
+    }
 };
 
+const handleDelete = async (id: bigint) => {
+  try{
+    setLoading(true);
+    const response = await registrationService.deleteRegistration(id);
+    if (response.success) {
+      setPlayers(players.filter((player) => player.id !== id));
+      toast.success("Registration deleted successfully");
+    } else {
+      toast.error(response.message);
+    }
+  }
+  catch (error) {
+    console.error("Error deleting registration:", error);
+    toast.error("Failed to delete registration");
+  }
+  finally{
+    setLoading(false);
+  }
+}
+
+const handleDeleteEvent = async (id: bigint) => {
+  try{
+    setLoading(true);
+    const response = await hostService.deleteEvent(id);
+    if (response.success) {
+      setEvents(events.filter((event) => event.id !== id));
+      refresh();
+      toast.success("Event deleted successfully");
+    } else {
+      toast.error(response.message);
+    }
+  }
+  catch (error) {
+    console.error("Error deleting event:", error);
+    toast.error("Failed to delete event");
+  }
+  finally{
+    setLoading(false);
+    setDeleteId(null);
+    setIsConfirmModalOpen(false);
+  }
+}
+
+const filteredPlayers = players.filter((reg) => {
+  const playerNames = reg.player.name2 
+    ? `${reg.player.name1} ${reg.player.name2}`.toLowerCase() 
+    : reg.player.name1.toLowerCase();
+  
+  const phoneNumbers = reg.phone.phone2 
+    ? `${reg.phone.phone1} ${reg.phone.phone2}` 
+    : reg.phone.phone1;
+
+  return (
+    playerNames.includes(searchQuery.toLowerCase()) ||
+    phoneNumbers.includes(searchQuery) ||
+    getEventName(reg.eventId).toLowerCase().includes(searchQuery.toLowerCase())
+  );
+});
+
+  let attribute1:any;
+  let attribute2:any;
+
+  if(window.innerWidth < 1500) {
+    attribute1 = "max-w-[60vw]";  
+    attribute2 = "flex-col";
+  }
+  else {  
+    attribute1 = "";
+    attribute2 = "";
+  }
   const renderOverview = () => (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="card bg-primary text-primary-content shadow-lg">
-          <div className="card-body">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="card-title text-sm opacity-90">Total Events</h3>
-                <p className="text-3xl font-bold">{stats.totalEvents}</p>
+  <div className="space-y-6">
+    {/* Stats Cards */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {[{
+        title: "Total Events",
+        value: events.length,
+        icon: <Calendar className="w-6 sm:w-8 h-6 sm:h-8 opacity-80" />,
+        bg: "bg-primary text-primary-content"
+      }, {
+        title: "Total Players",
+        value: players.length,
+        icon: <Users className="w-6 sm:w-8 h-6 sm:h-8 opacity-80" />,
+        bg: "bg-secondary text-secondary-content"
+      }].map((card, idx) => (
+        <div key={idx} className={`card shadow-lg w-full ${card.bg}`}>
+          <div className="card-body p-4">
+            <div className="flex items-center justify-between gap-2">
+              <div className="truncate">
+                <h3 className="card-title text-sm opacity-90 truncate">{card.title}</h3>
+                <p className="text-2xl sm:text-3xl font-bold truncate">{card.value}</p>
               </div>
-              <Calendar className="w-8 h-8 opacity-80" />
+              {card.icon}
             </div>
           </div>
         </div>
+      ))}
+    </div>
 
-        <div className="card bg-secondary text-secondary-content shadow-lg">
-          <div className="card-body">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="card-title text-sm opacity-90">Total Players</h3>
-                <p className="text-3xl font-bold">{stats.totalPlayers}</p>
-              </div>
-              <Users className="w-8 h-8 opacity-80" />
-            </div>
-          </div>
+    {/* Recent Events */}
+    <div className="card bg-base-100 shadow-lg w-full overflow-x-auto">
+      <div className="card-body p-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
+          <h2 className="card-title text-neutral truncate">Recent Events</h2>
+          <button 
+            className="btn btn-primary btn-sm flex items-center whitespace-nowrap"
+            onClick={() => { setUpdate(false); setEventId(null); setIsEventModalOpen(true); }}
+          >
+            <Plus className="w-4 h-4 mr-2" /> Host Event
+          </button>
         </div>
 
-        <div className="card bg-accent text-accent-content shadow-lg">
-          <div className="card-body">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="card-title text-sm opacity-90">Upcoming Events</h3>
-                <p className="text-3xl font-bold">{stats.upcomingEvents}</p>
-              </div>
-              <Trophy className="w-8 h-8 opacity-80" />
-            </div>
-          </div>
-        </div>
-
-        <div className="card bg-info text-info-content shadow-lg">
-          <div className="card-body">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="card-title text-sm opacity-90">Active Matches</h3>
-                <p className="text-3xl font-bold">{stats.activeMatches}</p>
-              </div>
-              <BarChart3 className="w-8 h-8 opacity-80" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Events */}
-      <div className="card bg-base-100 shadow-lg">
-        <div className="card-body">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="card-title text-neutral">Recent Events</h2>
-            <button 
-              className="btn btn-primary btn-sm"
-              onClick={() => setIsEventModalOpen(true)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Host Event
-            </button>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="table table-zebra w-full">
-              <thead>
-                <tr className="text-neutral">
-                  <th>Event</th>
-                  <th>Category</th>
-                  <th>Date</th>
-                  <th>Venue</th>
-                  <th>Fee</th>
-                  <th>Status</th>
+        <div className={`overflow-x-auto ${attribute1}`}>
+          <table className="table table-zebra w-full min-w-[0] sm:min-w-[500px]">
+            <thead>
+              <tr className="text-neutral">
+                <th>Event</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Venue</th>
+                <th>Fee</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.map((event) => (
+                <tr key={event.id} className="hover">
+                  <td className="max-w-xs break-words">
+                    <div className="font-semibold text-neutral">{event.title}</div>
+                    <DescriptionWithReadMore text={event.description} />
+                  </td>
+                  <td>
+                    <span className="badge badge-outline badge-primary">{event.category}</span>
+                  </td>
+                  <td className="text-neutral">{event.date} at {event.time}</td>
+                  <td className="text-neutral">{event.venue}</td>
+                  <td>
+                    {event.free ? (
+                      <span className="badge badge-success">Free</span>
+                    ) : (
+                      <span className="text-neutral font-semibold">₹{event.amount}</span>
+                    )}
+                  </td>
+                  <td>
+                    <div className="flex flex-wrap gap-2">
+                      <button className="btn btn-sm btn-outline btn-primary" onClick={() => { setUpdate(true); setEventId(event.id); setIsEventModalOpen(true); }}>Edit</button>
+                      <button className="btn btn-sm btn-outline btn-error" onClick={()=>{setIsDeleteEvent(true);setDeleteId(event.id);setIsConfirmModalOpen(true);}}>Remove</button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {events.map((event) => (
-                  <tr key={event.id} className="hover">
-                    <td>
-                      <div>
-                        <div className="font-semibold text-neutral">{event.title}</div>
-                        <div className="text-sm text-neutral/70">{event.description}</div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge badge-outline badge-primary">{event.category}</span>
-                    </td>
-                    <td className="text-neutral">{event.date} at {event.time}</td>
-                    <td className="text-neutral">{event.venue}</td>
-                    <td>
-                      {event.free ? (
-                        <span className="badge badge-success">Free</span>
-                      ) : (
-                        <span className="text-neutral font-semibold">${event.amount}</span>
-                      )}
-                    </td>
-                    <td>
-                      <span className="badge badge-info">Active</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-  );
-
-  const renderEvents = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-neutral">Event Management</h2>
-        <button 
-          className="btn btn-primary"
-          onClick={() => setIsEventModalOpen(true)}
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Host New Event
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {events.map((event) => (
-          <div key={event.id} className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow">
-            <div className="card-body">
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="card-title text-neutral">{event.title}</h3>
-                <span className="badge badge-primary badge-sm">{event.category}</span>
-              </div>
-              
-              <p className="text-neutral/70 text-sm mb-4">{event.description}</p>
-              
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center text-neutral">
-                  <Calendar className="w-4 h-4 mr-2 text-primary" />
-                  {event.date} at {event.time}
-                </div>
-                <div className="flex items-center text-neutral">
-                  <Settings className="w-4 h-4 mr-2 text-secondary" />
-                  {event.venue}
-                </div>
-              </div>
-              
-              <div className="card-actions justify-between items-center mt-4">
-                <div>
-                  {event.free ? (
-                    <span className="badge badge-success">Free Event</span>
-                  ) : (
-                    <span className="text-lg font-bold text-primary">${event.amount}</span>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <button className="btn btn-sm btn-outline btn-primary">Edit</button>
-                  <button className="btn btn-sm btn-outline btn-error">Cancel</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  </div>
+);
 
   return (
     <div className="min-h-screen bg-base-200" data-theme="smashrix">
@@ -379,6 +508,15 @@ const AdminDashboard: React.FC = () => {
           <h1 className="text-xl font-bold text-primary">Smashrix Admin Dashboard</h1>
         </div>
         <div className="flex-none">
+          {/* Hamburger for mobile */}
+          <button
+            className="btn btn-ghost md:hidden"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            ☰
+          </button>
+
+          {/* Avatar */}
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full bg-primary text-primary-content flex items-center justify-center">
@@ -395,179 +533,170 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <div className="flex">
-        {/* Sidebar */}
+        {/* Desktop Sidebar */}
         <div className="w-64 min-h-screen bg-base-100 shadow-lg hidden md:block">
-          <ul className="menu p-4 space-y-2">
-            <li>
-              <button
-                className={`${activeTab === 'overview' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
-                onClick={() => setActiveTab('overview')}
-              >
-                <BarChart3 className="w-5 h-5" />
-                Overview
-              </button>
-            </li>
-            <li>
-              <button
-                className={`${activeTab === 'events' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
-                onClick={() => setActiveTab('events')}
-              >
-                <Calendar className="w-5 h-5" />
-                Events
-              </button>
-            </li>
-            {/* <li>
-              <button
-                className={`${activeTab === 'matchmaking' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
-                onClick={() => setActiveTab('matchmaking')}
-              >
-                <Trophy className="w-5 h-5" />
-                Matchmaking
-              </button>
-            </li> */}
-            <li>
-              <button
-                className={`${activeTab === 'players' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
-                onClick={() => setActiveTab('players')}
-              >
-                <Users className="w-5 h-5" />
-                Players
-              </button>
-            </li>
-          </ul>
+          <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
 
-        {/* Mobile Drawer */}
-        <div className="md:hidden">
-          <div className="drawer">
-            <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content">
-              <label htmlFor="dashboard-drawer" className="btn btn-ghost">
-                ☰ Menu
-              </label>
-            </div>
-            <div className="drawer-side">
-              <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
-              <ul className="menu p-4 w-64 min-h-full bg-base-100">
-                <li>
-              <button
-                className={`${activeTab === 'overview' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
-                onClick={() => setActiveTab('overview')}
-              >
-                <BarChart3 className="w-5 h-5" />
-                Overview
-              </button>
-            </li>
-            <li>
-              <button
-                className={`${activeTab === 'events' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
-                onClick={() => setActiveTab('events')}
-              >
-                <Calendar className="w-5 h-5" />
-                Events
-              </button>
-            </li>
-            {/* <li>
-              <button
-                className={`${activeTab === 'matchmaking' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
-                onClick={() => setActiveTab('matchmaking')}
-              >
-                <Trophy className="w-5 h-5" />
-                Matchmaking
-              </button>
-            </li> */}
-            <li>
-              <button
-                className={`${activeTab === 'players' ? 'active bg-primary text-primary-content' : 'text-neutral hover:bg-base-200'}`}
-                onClick={() => setActiveTab('players')}
-              >
-                <Users className="w-5 h-5" />
-                Players
-              </button>
-            </li>
-              </ul>
-            </div>
+        {/* Mobile Top Panel */}
+        <div
+          className={`md:hidden fixed inset-x-0 top-0 z-50 bg-base-100 shadow-lg transition-transform duration-300 ${
+            isSidebarOpen ? "translate-y-0" : "-translate-y-full"
+          }`}
+        >
+          <div className="p-4">
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+            <button
+              className="btn btn-sm btn-ghost mt-4"
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              Close
+            </button>
           </div>
         </div>
+
+        {/* Overlay */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/40 z-40"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
 
         {/* Main Content */}
+        {loading ? (
+          <div className="flex items-center justify-center w-full min-h-screen">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-primary mx-auto mb-4"></div>
+              <p className="text-gray-400">Loading Details...</p>
+            </div>
+          </div>
+        ) : (
         <div className="flex-1 p-6">
           {activeTab === 'overview' && renderOverview()}
-          {activeTab === 'events' && renderEvents()}
-          {/* {activeTab === 'matchmaking' && <MatchmakingPanel events={events} players={players} />} */}
+          {/* {activeTab === 'matchmaking' && <MatchmakingPanel initialTeams={players.map((p) => ({
+                                                                            ...p,
+                                                                            eligible: true,
+                                                                          }))} />} */}
+          {activeTab === 'matchmaking' && <MatchmakingPanel initialTeams={players}/>}
           {activeTab === 'players' && (
             <div className="card bg-base-100 shadow-lg">
-      <div className="card-body">
-        <h2 className="card-title text-neutral mb-4">Event Registrations
-          <div className="flex gap-2">
-            <button className="btn btn-sm btn-outline btn-primary" onClick={handleExportCSV}>
-              Export CSV
-            </button>
-            <button className="btn btn-sm btn-outline btn-secondary" onClick={handleExportPDF}>
-              Export PDF
-            </button>
-          </div>
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="table table-sm sm:table-md table-zebra w-full">
-            <thead>
-              <tr className="text-neutral">
-                <th>Name(s)</th>
-                <th>Phone</th>
-                <th>Gender(s)</th>
-                <th>Event ID</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {players.map((reg) => (
-                <tr key={reg.id} className="hover">
-                  <td className="font-semibold text-neutral">
-                    {reg.player.name2 ? `${reg.player.name1} & ${reg.player.name2}` : reg.player.name1}
-                  </td>
-                  <td className="text-neutral">
-                    {reg.phone.phone2 ? `${reg.phone.phone1}, ${reg.phone.phone2}` : reg.phone.phone1}
-                  </td>
-                  <td>
+              <div className="card-body">
+                
+                <h2 className={`card-title text-neutral mb-4 flex ${attribute2} justify-between items-center`}>
+                    <span>Event Registrations</span>
+                    <SearchBar 
+                          placeholder="Search players, phone or event..." 
+                          value={searchQuery} 
+                          onChange={setSearchQuery} 
+                        />
+                  
+
+                  <div className="flex items-center gap-3">
+                    {/* <SearchBar 
+                      placeholder="Search players, phone or event..." 
+                      value={searchQuery} 
+                      onChange={setSearchQuery} 
+                    /> */}
+
                     <div className="flex gap-2">
-                      <span className="badge badge-outline badge-secondary">
-                        {reg.gender.gender1}
-                      </span>
-                      {reg.gender.gender2 && (
-                        <span className="badge badge-outline badge-secondary">
-                          {reg.gender.gender2}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="text-neutral">{reg.eventId}</td>
-                  <td>
-                    <div className="flex gap-2">
-                      <button className="btn btn-xs btn-outline btn-info" onClick={() => handleEdit(reg.id)}>
-                        <Edit className="w-4 h-4" />
+                      <button className="btn btn-sm btn-outline btn-primary" onClick={handleExportCSV}>
+                        Export CSV
                       </button>
-                      <button className="btn btn-xs btn-outline btn-warning" onClick={() => handleDelete(reg.id)}>
-                        <Trash2 className="w-4 h-4" />
+                      <button className="btn btn-sm btn-outline btn-secondary" onClick={handleExportPDF}>
+                        Export PDF
                       </button>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+                  </div>
+                </h2>
+
+                <div className={`overflow-x-auto ${attribute1}`}>
+                  <table className="table table-sm sm:table-md table-zebra w-full">
+                    <thead>
+                      <tr className="text-neutral">
+                        <th>Name(s)</th>
+                        <th>Phone</th>
+                        <th>Gender(s)</th>
+                        <th>Event Name</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredPlayers.map((reg) => (
+                        <tr key={reg.id} className="hover">
+                          <td className="font-semibold text-neutral">
+                            {reg.player.name2 ? `${reg.player.name1} & ${reg.player.name2}` : reg.player.name1}
+                          </td>
+                          <td className="text-neutral">
+                            {reg.phone.phone2 ? `${reg.phone.phone1}, ${reg.phone.phone2}` : reg.phone.phone1}
+                          </td>
+                          <td>
+                            <div className="flex gap-2">
+                              <span className="badge badge-outline badge-secondary">
+                                {reg.gender.gender1}
+                              </span>
+                              {reg.gender.gender2 && (
+                                <span className="badge badge-outline badge-secondary">
+                                  {reg.gender.gender2}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="text-neutral">{getEventName(reg.eventId)}</td>
+                          <td>
+                            <div className="flex gap-2">
+                              {/* <button className="btn btn-xs btn-outline btn-info" onClick={() => handleEdit(reg.id)}>
+                                <Edit className="w-4 h-4" />
+                              </button> */}
+                              <button onClick={() => {setEventDetails({id:reg.eventId,category:getEventCategory(reg.eventId),playerid:reg.id});setIsRegistrationModalOpen(true)}} className="btn btn-xs btn-outline btn-info">
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button className="btn btn-xs btn-outline btn-warning" onClick={() => {setIsDeleteEvent(false);setDeleteId(reg.id);setIsConfirmModalOpen(true);}}>
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           )}
-        </div>
+        </div>)}
       </div>
 
       {/* Event Hosting Modal */}
       <EventHostingModal
         isOpen={isEventModalOpen}
-        onClose={() => setIsEventModalOpen(false)}
-        onSubmit={handleEventCreate}
+        onClose={() => {setIsEventModalOpen(false); setUpdate(false); setEventId(null);}}
+        onSubmit={update===false ? handleEventCreate : handleEventUpdate}
+        eventId={eventId}
       />
+      {/* Event Registration Modal */}
+      <RegistrationModal
+        isOpen={isRegistrationModalOpen}
+        onClose={() => setIsRegistrationModalOpen(false)}
+        onSubmit={eventDetails?.category==="Singles" ? handleRegisterSingle : handleRegisterDouble}
+        eventDetails={eventDetails}
+      />
+
+      {/* Confirm Delete Modal */}
+      <ConfirmDeleteModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => {setIsConfirmModalOpen(false);setDeleteId(null)}}
+        onConfirm={() => {
+          if (isDeleteEvent && deleteId !== null) {
+            handleDeleteEvent(deleteId);
+          } else {
+            handleDelete(deleteId);
+          }
+          setIsConfirmModalOpen(false);
+        }}
+        itemName={isDeleteEvent ? "this event" : "this player"}
+        />
     </div>
   );
 };

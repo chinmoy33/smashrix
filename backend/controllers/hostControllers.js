@@ -85,7 +85,7 @@ const updateEvent = async (req, res) => {
         venue,
         amount
       })
-      .eq("Event_id", id)
+      .eq("id", id)
       .select();
 
     if (updateError) {
@@ -106,10 +106,10 @@ const deleteEvent = async(req,res) => {
         const { data: updateData, error: updateError } = await supabase
         .from("Events")
         .delete()
-        .eq("Event_id", id)
+        .eq("id", id)
 
         if (updateError) {
-          console.error("Supabase update error:", updateError);
+          console.error("Supabase Delete error:", updateError);
           return res.status(500).json({ success: false, message: "Failed to Delete Event" });
         }
 
@@ -121,6 +121,9 @@ const deleteEvent = async(req,res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 }
+
+
+
 
 
 module.exports = {
