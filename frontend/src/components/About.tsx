@@ -11,7 +11,7 @@ import angaraj from '../assets/angaraj.jpg';
 import rohan from '../assets/rohan.jpg';
 import kalpeeta from '../assets/kalpeeta.jpg';
 import antara from '../assets/antara.jpg';
-import dhrubasir from '../assets/dhrubasir.jpg';
+import dhrubasir2 from '../assets/dhrubasir2.jpg'
 
 const About: React.FC = () => {
   const coaches = [
@@ -143,10 +143,10 @@ const About: React.FC = () => {
     // Check the window width
     if (window.innerWidth < 400) {
       // If the window is less than 400px wide, set the variable to -100
-      myVariable = "-50px";
+      myVariable = "0px";
     } else {
       // Otherwise, set the variable to -350
-      myVariable = "-350px";
+      myVariable = "100px";
     }
 
   return (
@@ -189,12 +189,12 @@ const About: React.FC = () => {
               <div 
                 className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="w-full h-64 overflow-hidden"> 
+                <div> 
                 <img
-                src={dhrubasir}
+                src={dhrubasir2}
                 alt="Dr. Dhrubajyoti Baruah"
-                className="w-full object-cover"
-                style={{ transform: `translateY(${myVariable})` }}
+                className="w-full h-64 object-cover"
+                //style={{ transform: `translateY(${myVariable})` }}
                 />
                 </div>
                 
