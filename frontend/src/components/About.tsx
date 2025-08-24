@@ -110,7 +110,7 @@ const About: React.FC = () => {
       //specialization: "Junior Development",
       image: diptangshu,
       //achievements: ["Junior World Championships", "Child Psychology Certified", "BWF Level 2 Certified"],
-      email: "emma@smashrix.com",
+      email: "parashardiptangshu@outlook.com",
       phone: "7099662292"
     },
     {

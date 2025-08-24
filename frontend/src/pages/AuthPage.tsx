@@ -25,27 +25,6 @@ const AuthPage = () => {
   //   login(formData);
   // }
 
-    useEffect(() => {
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        // store session.user in state
-        console.log("Restored session:", session.user);
-      } else {
-        console.log("No session found");
-      }
-    };
-    getSession();
-
-    // Optional: listen for auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("Auth state changed:", session);
-    });
-
-    return () => listener.subscription.unsubscribe();
-  }, []);
-
-
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
