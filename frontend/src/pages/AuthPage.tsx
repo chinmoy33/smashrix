@@ -47,7 +47,7 @@ const AuthPage = () => {
 
 
   const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault
+    e.preventDefault();
     setLoading(true);
     try{
         const {data,error}=await supabase.auth.signInWithPassword({
@@ -77,7 +77,7 @@ const AuthPage = () => {
   };
 
   const handleEmailSignup = async (e: React.FormEvent) => {
-    e.preventDefault
+    e.preventDefault();
     setLoading(true);
     try{
         console.log("Signing up with:", formData);
