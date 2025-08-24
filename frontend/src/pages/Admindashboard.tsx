@@ -487,7 +487,7 @@ const filteredPlayers = players.filter((reg) => {
                   <td>
                     <div className="flex flex-wrap gap-2">
                       <button className="btn btn-sm btn-outline btn-primary" onClick={() => { setUpdate(true); setEventId(event.id); setIsEventModalOpen(true); }}>Edit</button>
-                      <button className="btn btn-sm btn-outline btn-error" onClick={()=>{setIsDeleteEvent(true);setDeleteId(event.id);setIsConfirmModalOpen(true);}}>Remove</button>
+                      <button className="btn btn-sm btn-outline btn-error" onClick={()=>{setIsDeleteEvent(true);setDeleteId(event.id);setIsConfirmModalOpen(true);}} disabled={true}>Remove</button>
                     </div>
                   </td>
                 </tr>
@@ -650,7 +650,7 @@ const filteredPlayers = players.filter((reg) => {
                               <button onClick={() => {setEventDetails({id:reg.eventId,category:getEventCategory(reg.eventId),playerid:reg.id});setIsRegistrationModalOpen(true)}} className="btn btn-xs btn-outline btn-info">
                                 <Edit className="w-4 h-4" />
                               </button>
-                              <button className="btn btn-xs btn-outline btn-warning" onClick={() => {setIsDeleteEvent(false);setDeleteId(reg.id);setIsConfirmModalOpen(true);}}>
+                              <button className="btn btn-xs btn-outline btn-warning" onClick={() => {setIsDeleteEvent(false);setDeleteId(reg.id);setIsConfirmModalOpen(true);}} disabled={true}>
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
