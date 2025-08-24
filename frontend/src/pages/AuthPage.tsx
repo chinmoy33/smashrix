@@ -24,20 +24,42 @@ const AuthPage = () => {
   //   e.preventDefault();
   //   login(formData);
   // }
+
+    useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        // store session.user in state
+        console.log("Restored session:", session.user);
+      } else {
+        console.log("No session found");
+      }
+    };
+    getSession();
+
+    // Optional: listen for auth changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("Auth state changed:", session);
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault
     setLoading(true);
     try{
-        const {error}=await supabase.auth.signInWithPassword({
+        const {data,error}=await supabase.auth.signInWithPassword({
         email:formData.email,
         password:formData.password,
         });
-        if(!error){
+        if(!error && data.session){
           toast.success("Logged in!");
           navigate("/Admin");
         }
         else{
-          toast.error(error.message);
+          toast.error(error?.message || "An unexpected Error occured");
         }
         
     }
@@ -85,7 +107,7 @@ const AuthPage = () => {
     }
   };
 
-  const redirectURL = import.meta.env.MODE === 'development' ? "http://localhost:3000/auth/callback" : "https://data-visualisation-v1.vercel.app/auth/callback"
+  const redirectURL = import.meta.env.MODE === 'development' ? "http://localhost:3000/auth/callback" : "https://smashrix.vercel.app/auth/callback"
 
   // 🔐 Google OAuth Login
   const handleGoogleLogin = async () => {
