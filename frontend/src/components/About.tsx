@@ -182,7 +182,7 @@ const About: React.FC = () => {
         
         {/* Teacher-incharge Section */}
         <div className="mb-16">
-          <h3 className="text-3xl font-bold text-center text-gray-900 mb-12">Our Teacher-incharge</h3>
+          <h3 className="text-3xl font-bold text-center text-gray-900 mb-12">Our Professor-in-charge</h3>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
 
@@ -210,7 +210,7 @@ const About: React.FC = () => {
                     </div>
                   </div>
                   
-                  <p className="text-orange-600 font-semibold mb-2">Teacher-incharge</p>
+                  <p className="text-orange-600 font-semibold mb-2">Professor-in-charge</p>
                   {/* <p className="text-gray-600 mb-4"><strong>Specialization:</strong> {coach.specialization}</p> */}
                   
                   {/* <div className="mb-4">
