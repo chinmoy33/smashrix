@@ -105,8 +105,7 @@ function App() {
               <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
               <div className="flex space-x-4">
                 <a href="https://chat.whatsapp.com/L6cGVIZO5p09Xa76PAMT0K?mode=ac_t" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-orange-400 transition-colors">Whatsapp</a>
-                {/* <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors">Instagram</a>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors">Twitter</a> */}
+                <a href="https://www.instagram.com/smashrix/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-orange-400 transition-colors">Instagram</a>
               </div>
             </div>
           </div>
@@ -122,48 +121,3 @@ function App() {
 }
 
 export default App;
-
-
-// import { Toaster } from "react-hot-toast";
-
-// import { Route, Routes } from "react-router-dom";
-// import ProtectedRoute from "./components/ProtectedRoute.tsx";
-// import LandingPage from "./pages/LandingPage.tsx";
-// import AuthPage from "./pages/AuthPage.tsx";
-// import OAuthCallback from "./components/OAuthCallback.tsx";
-// import DashboardPage from "./pages/DashboardPage.tsx";
-// import PageNotFound from "./pages/PageNotFound.tsx";
-
-// function App() {
-//   return (
-//     <div className="min-h-screen">
-//       <Routes>
-//         <Route
-//           path="/Dashboard/*"
-//           element={
-//             <ProtectedRoute>
-//               <DashboardPage />
-//             </ProtectedRoute>
-//           }
-//         />
-//         <Route path="/" element={<LandingPage />} />
-//         <Route path="/Login" element={<AuthPage />} />
-//         <Route path="/auth/callback" element={<OAuthCallback />} />
-//         <Route path="/*" element={<PageNotFound />} />
-//       </Routes>
-//       <Toaster
-//         position="top-right"
-//         toastOptions={{
-//           style: {
-//             background: "rgba(255, 255, 255, 0.1)",
-//             color: "#fff",
-//             backdropFilter: "blur(10px)",
-//             border: "1px solid rgba(255, 255, 255, 0.2)",
-//           },
-//         }}
-//       />
-//     </div>
-//   );
-// }
-
-// export default App;
