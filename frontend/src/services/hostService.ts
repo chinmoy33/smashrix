@@ -9,6 +9,8 @@ const API_BASE_URL =
     ? "http://localhost:3002" // for local dev with Nginx proxy (Docker)
     : BACKEND_API_URL; // for production
 
+// const API_BASE_URL = BACKEND_API_URL;
+
 const hostApi = axios.create({
   baseURL: API_BASE_URL, // direct microservice URL
 });

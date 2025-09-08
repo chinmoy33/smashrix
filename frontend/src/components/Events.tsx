@@ -22,24 +22,24 @@ const Events: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
 
-  // useEffect(() => {
-  //   const fetchEvents = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await hostService.getHostedEvents();
-  //       if (response.success) {
-  //         setUpcomingEvents(response.data);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching hosted events:", error);
-  //     }
-  //     finally{
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const response = await hostService.getHostedEvents();
+        if (response.success) {
+          setUpcomingEvents(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching hosted events:", error);
+      }
+      finally{
+        setLoading(false);
+      }
+    };
 
-  //   fetchEvents();
-  // }, []);
+    fetchEvents();
+  }, []);
 
   const handleRegisterSingle = (id:bigint,newRegister: Omit<SinglesPlayer, 'id' | 'created_at'>) => {
      
@@ -57,12 +57,12 @@ const Events: React.FC = () => {
         })
         .catch(error => {
           console.error("Error registering in event:", error);
-          toast.error("Failed to Register for event");
+          toast.error("Please Register again!");
         });
       }
       catch(error){
         console.error("Error in handleEventCreate:", error);
-        toast.error("Failed to register for event");
+        toast.error("Please Register again!");
       }
       finally{
         setIsRegistrationModalOpen(false);
@@ -138,7 +138,7 @@ const Events: React.FC = () => {
           {loading ? (
             <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-primary mx-auto mb-4"></div>
-                <p className="text-gray-400">Loading Event Details...</p>
+                <p className="text-gray-400">Loading Event Details...It may take a while!</p>
             </div>) :
           upcomingEvents.length === 0 ? (
             <EmptyEventsPlaceholder />
@@ -191,7 +191,7 @@ const Events: React.FC = () => {
                   
                   <div className="flex items-center justify-between pt-4 border-t">
                     <div className="text-lg font-bold text-orange-600">
-                      {event.amount !== null ? `$${event.amount.toFixed(2)}` : 'Free'}
+                      {event.amount !== 0 ? `₹${event.amount.toFixed(2)}` : 'Free'}
                     </div>
                     {/* <div className="flex items-center text-yellow-600">
                       <Trophy size={16} className="mr-1" />
