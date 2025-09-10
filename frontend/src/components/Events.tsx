@@ -22,24 +22,24 @@ const Events: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
 
-  // useEffect(() => {
-  //   const fetchEvents = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await hostService.getHostedEvents();
-  //       if (response.success) {
-  //         setUpcomingEvents(response.data);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching hosted events:", error);
-  //     }
-  //     finally{
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const response = await hostService.getHostedEvents();
+        if (response.success) {
+          setUpcomingEvents(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching hosted events:", error);
+      }
+      finally{
+        setLoading(false);
+      }
+    };
 
-  //   fetchEvents();
-  // }, []);
+    fetchEvents();
+  }, []);
 
   const handleRegisterSingle = (id:bigint,newRegister: Omit<SinglesPlayer, 'id' | 'created_at'>) => {
      

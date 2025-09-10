@@ -7,8 +7,13 @@ import badminton2 from '../assets/badminton6.jpg'
 import exp from '../assets/exp.jpeg'
 import trophy from '../assets/trophy.jpg'
 import open from '../assets/open1.jpg'
+import {useSelector,useDispatch} from 'react-redux';
+import { setActiveSection } from '../store/renderSlice.ts';
 
 const Home: React.FC = () => {
+  const activeSection = useSelector((state) => state.render.activeSection);
+  const dispatch=useDispatch();
+
   return (
     <section className="min-h-screen">
       {/* Hero Section */}
@@ -30,15 +35,26 @@ const Home: React.FC = () => {
             Where Champions Are Made, One Smash at a Time
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://chat.whatsapp.com/L6cGVIZO5p09Xa76PAMT0K?mode=ac_t" target="_blank" rel="noopener noreferrer">
-            <button className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105">
-              Join Our Club
-            </button>
-            </a>
-            {/* <button className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-3 rounded-lg font-semibold transition-all duration-300">
-              Watch Training Videos
-            </button> */}
-          </div>
+  {/* First button = link */}
+  <a
+    href="https://chat.whatsapp.com/L6cGVIZO5p09Xa76PAMT0K?mode=ac_t"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <button className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105">
+      Join Our Club
+    </button>
+  </a>
+
+  {/* Second button = JS only */}
+  <button
+    onClick={() => dispatch(setActiveSection("events"))}
+    className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+  >
+    Click here to Register for Event!
+  </button>
+</div>
+
         </div>
         
       </div>
