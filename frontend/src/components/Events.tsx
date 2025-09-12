@@ -15,31 +15,45 @@ interface EventDetails {
   category: Category;
 }
 
+const EventsData : Event[] = [{
+  id: 24n,
+  free:true,
+  title: "Orientation 1.0",
+  description: "Smashrix presents the Orientation Doubles — an exciting kickoff event featuring both Men’s Doubles and Women’s Doubles! Aimed at welcoming new members, this friendly tournament is the perfect chance to connect, team up, and showcase your skills on court. Whether you’re here to compete or just enjoy the game, join us for an energetic start to the season!",
+  category: 'Doubles',
+  date: "13th September 2025",
+  time: "4:00 pm",
+  venue: "BCR",
+  amount: 0,
+  created_at: "2025-09-10 16:58:42.370935+00"
+}]
+
 const Events: React.FC = () => {
-  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+ // const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>(EventsData);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [eventDetails, setEventDetails] = useState<EventDetails|null>(null);
   const [loading, setLoading] = useState(false);
 
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        const response = await hostService.getHostedEvents();
-        if (response.success) {
-          setUpcomingEvents(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching hosted events:", error);
-      }
-      finally{
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchEvents = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const response = await hostService.getHostedEvents();
+  //       if (response.success) {
+  //         setUpcomingEvents(response.data);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching hosted events:", error);
+  //     }
+  //     finally{
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchEvents();
-  }, []);
+  //   fetchEvents();
+  // }, []);
 
   const handleRegisterSingle = (id:bigint,newRegister: Omit<SinglesPlayer, 'id' | 'created_at'>) => {
      
@@ -199,9 +213,16 @@ const Events: React.FC = () => {
                     </div> */}
                   </div>
                   
-                  <button onClick={() => {setEventDetails({id:event.id,category:event.category});setIsRegistrationModalOpen(true)}} className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors duration-200">
+                  {/* <button onClick={() => {setEventDetails({id:event.id,category:event.category});setIsRegistrationModalOpen(true)}} className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors duration-200">
                     Register Now
-                  </button>
+                  </button> */}
+                  <a href="https://docs.google.com/forms/d/e/1FAIpQLSefwFybQGIR8HTp93PgQlU4Lq1Hpevr0lJ5T1bPMNzUqlGKNQ/viewform?usp=header" 
+                    target="_blank" 
+                    rel="noopener noreferrer">
+                    <button className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors duration-200">
+                      Register Now
+                    </button>
+                  </a>
                 </div>
               </div>
             ))}
